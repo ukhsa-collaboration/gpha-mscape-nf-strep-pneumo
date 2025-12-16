@@ -18,7 +18,7 @@ process DOWNLOAD_S3_FILES {
     cpus 1
     memory '1GB'
     tag "${climb_id}"
-    publishDir "$params.outdir/s3_downloads", mode: "copy"
+    publishDir "$params.outdir", mode: "copy"
 
     input:
     val climb_id
@@ -27,10 +27,10 @@ process DOWNLOAD_S3_FILES {
 
     output:
     tuple path("${climb_id}_PlusPF.kraken_assignments.tsv"), path("${climb_id}_PlusPF.kraken_report.txt"), path("${climb_id}.human_filtered.fastq.gz"), emit: s3_results
-    path "${climb_id}_strep_pneumo_analysis_log.txt", emit: logs
+    path "${climb_id}_s3_download_log.txt", emit: logs
 
     script:
     """
-    download_s3_files_for_analysis.py -i $climb_id -s $server -o $out_dir
+    download_s3_files_for_analysis.py -i $climb_id -s $server -o .
     """
     }
