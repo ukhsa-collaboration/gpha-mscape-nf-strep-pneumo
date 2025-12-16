@@ -131,7 +131,7 @@ def main():
     exitcode = 0
 
     # Set up log file
-    log_file = Path(args.output) / f"{args.input}_qc_metrics_log.txt"
+    log_file = Path(args.output) / f"{args.input}_s3_download_log.txt"
     set_up_logger(log_file)
 
     # Extract info from onyx
