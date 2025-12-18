@@ -18,8 +18,7 @@ process RUN_PNEUMOKITY {
     publishDir "$params.outdir", mode: 'copy'
 
     input:
-    val climb_id
-    path filtered_fastq
+    tuple val(climb_id), path(filtered_fastq)
 
     output:
     tuple path("pneumo_capsular_typing/${climb_id}_alldata.csv"), path("pneumo_capsular_typing/${climb_id}_quality_system_data.csv"), path("pneumo_capsular_typing/${climb_id}_result_data.csv"), emit: pneumokity_results
