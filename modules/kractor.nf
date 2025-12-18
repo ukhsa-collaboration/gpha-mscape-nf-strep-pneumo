@@ -17,6 +17,7 @@ process RUN_KRACTOR {
     container 'quay.io/biocontainers/kractor:3.1.0--h4349ce8_0'
     cpus 2
     memory '2GB'
+    tag "${climb_id}"
     publishDir "$params.outdir", mode: 'copy'
 
     input:

@@ -14,6 +14,7 @@ process RUN_PNEUMOKITY {
     container 'docker.io/nanozoo/pneumokity:1.0--ec3a71f'
     cpus 2
     memory '2GB'
+    tag "${climb_id}"
     publishDir "$params.outdir", mode: 'copy'
 
     input:
