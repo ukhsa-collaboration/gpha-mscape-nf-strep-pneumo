@@ -21,12 +21,11 @@ process RUN_KRACTOR {
     publishDir "$params.outdir", mode: 'copy'
 
     input:
-    val climb_id
     val taxid
-    tuple path(kraken_stdout), path(kraken_report), path(fastq)
+    tuple val(climb_id), path(kraken_stdout), path(kraken_report), path(fastq)
 
     output:
-    path "${climb_id}.taxon_extracted.human_filtered.fastq.gz", emit: kractor_results
+    tuple val("${climb_id}"), path("${climb_id}.taxon_extracted.human_filtered.fastq.gz"), emit: kractor_results
 
     script:
     """
