@@ -26,7 +26,7 @@ process DOWNLOAD_S3_FILES {
     val server
 
     output:
-    tuple path("${climb_id}_PlusPF.kraken_assignments.tsv"), path("${climb_id}_PlusPF.kraken_report.txt"), path("${climb_id}.human_filtered.fastq.gz"), emit: s3_results
+    tuple val("${climb_id}"), path("${climb_id}_PlusPF.kraken_assignments.tsv"), path("${climb_id}_PlusPF.kraken_report.txt"), path("${climb_id}.human_filtered.fastq.gz"), emit: s3_results
     path "${climb_id}_s3_download_log.txt", emit: logs
 
     script:
