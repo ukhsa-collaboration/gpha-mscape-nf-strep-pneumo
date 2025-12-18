@@ -15,8 +15,8 @@ process DOWNLOAD_S3_FILES {
             - result_file: Path to the onyx analysis json file.
     */
     container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.3.1'
-    cpus 1
-    memory '1GB'
+    cpus 2
+    memory '2GB'
     tag "${climb_id}"
     publishDir "$params.outdir", mode: "copy"
 
