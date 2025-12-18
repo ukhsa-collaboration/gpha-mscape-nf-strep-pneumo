@@ -16,6 +16,7 @@ process RUN_PNEUMOKITY {
     memory '2GB'
     tag "${climb_id}"
     publishDir "$params.outdir", mode: 'copy'
+    errorStrategy 'ignore'
 
     input:
     tuple val(climb_id), path(filtered_fastq)
