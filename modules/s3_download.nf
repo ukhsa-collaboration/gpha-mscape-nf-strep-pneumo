@@ -18,7 +18,7 @@ process DOWNLOAD_S3_FILES {
     cpus 2
     memory '2GB'
     tag "${climb_id}"
-    publishDir "$params.outdir", mode: "copy"
+    publishDir "$params.outdir/logs/", mode: "copy", pattern: "*_log.txt"
 
     input:
     val climb_id
