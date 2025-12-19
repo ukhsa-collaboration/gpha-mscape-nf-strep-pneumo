@@ -18,7 +18,7 @@ process RUN_KRACTOR {
     cpus 2
     memory '2GB'
     tag "${climb_id}"
-    publishDir "$params.outdir", mode: 'copy'
+    publishDir "$params.outdir/filtered_fastqs", mode: 'copy'
 
     input:
     val taxid
