@@ -1,0 +1,2 @@
+sampleid,workflow,input_dir,fastq_files,assembly,minpercent,mash,database,output_dir,csv_collate
+C-123456789,PneumoKITy V1.0,,"['C-123456789.taxon_extracted.human_filtered.fastq.gz', 'C-123456789.taxon_extracted.human_filtered.fastq.gz']",,90,mash,/PneumoKITy/ctvdb,./pneumo_capsular_typing,
