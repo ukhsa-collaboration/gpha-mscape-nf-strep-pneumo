@@ -5,7 +5,9 @@ results to an onyx analysis table.
 """
 
 # Imports
+import datetime
 import json
+import yaml
 import os
 from pathlib import Path
 import pandas as pd
@@ -29,9 +31,12 @@ def get_args():
         fastqs in s3 and then download to location specified.
         """,
     )
-    parser.add_argument("--input", "-i", type=str, required=True, help="Sample ID")
+    parser.add_argument("--climbid", "-i", type=str, required=True, help="Sample ID")
     parser.add_argument(
         "--output", "-o", type=str, required=True, help="Folder to save downloaded files to"
+    )
+    parser.add_argument(
+        "--vaccine-serotypes", "-vt", type=str, required=True, help="Path to yaml containing vaccine serotype information"
     )
     parser.add_argument(
         "--server",
@@ -139,22 +144,84 @@ def get_pneumokity_results(result_file: os.path, all_data_file: os.path) -> dict
 
     return result_dict
 
-# TODO: Placeholder function
-def get_vaccine_status(predicted_serotype: str, vaccine_dict: dict) -> dict:
+def get_analysis_status(result_dict: dict):
+    """Check if pneumokity returned a serotype or failed
+    Arguments:
+        result_dict -- Dict containing pneumokity results
+    Returns:
+        result_dict -- Updated result dict with analysis status of pneumokity added
+    """
+    fails = [
+        "Below 70% hit",
+        "Below 20% hit",
+        "Median multiplicity low",
+    ]
+
+    if result_dict["predicted_serotype"] in fails:
+        result_dict["analysis_status"] = "Fail"
+    else:
+        result_dict["analysis_status"] = "Pass"
+
+    return result_dict
+
+def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
     """"Takes predicted serotype and checks if it is a vaccine preventable
     serotype. Returns overall vaccine status (vaccine preventable or
     non-vaccine preventable) and dict of serotype presence in different
     vaccines.
     Arguments:
-        predicted_serotype -- Serotype of sample
-        vaccine_dict -- Dictionary containing information on the serotypes
+        result_dict -- Dictionary containing key pneumokity results
+        vaccine_file -- File containing information on the serotypes
                         included in different vaccines
     Returns:
-        vaccine_status_dict -- Dict containing vaccine status information
+        vaccine_status_dict -- Updated result dict containing vaccine status information
     """
-    vaccine_status_dict = {}
+    with Path(vaccine_status_file).open("r") as file:
+        vaccine_dict = yaml.safe_load(file)
 
-    return vaccine_status_dict
+    serotype = result_dict["predicted_serotype"]
+
+    # Handle pneumokity fails:
+    if result_dict["analysis_status"] == "Fail":
+        result_dict["vaccine_status"] = "No result"
+        result_dict["vaccine_coverage"] = {
+            "PCV7": "No result",
+            "PCV13": "No result",
+            "PCV15": "No result",
+            "PCV20": "No result",
+            "PPV23": "No result"
+        }
+
+    # Handle incomplete serotype outcomes
+    elif serotype in vaccine_dict["predicted_serotype_incomplete"].keys():
+        result_dict["vaccine_status"] = vaccine_dict["predicted_serotype_incomplete"][serotype]["result"]
+        result_dict["vaccine_coverage"] = {
+            "PCV7": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV7"],
+            "PCV13": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV13"],
+            "PCV15": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV15"],
+            "PCV20": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV20"],
+            "PPV23": vaccine_dict["predicted_serotype_incomplete"][serotype]["PPV23"]
+        }
+
+    # Handle other serotypes
+    else:
+        result_dict["vaccine_coverage"] = {}
+        # Get serotype status for individual vaccines:
+        for vaccine in vaccine_dict["vaccine_serotypes"]:
+            status_set = set()
+            if serotype in vaccine_dict["vaccine_serotypes"][vaccine]:
+                result_dict["vaccine_coverage"][f"{vaccine}"] = "Included"
+                status_set.add("VT")
+            else:
+                result_dict["vaccine_coverage"][f"{vaccine}"] = "Not included"
+                status_set.add("Non-VT")
+        # Get overall vaccine status:
+        if status_set == {"VT"} or status_set == {"VT", "Non-VT"}:
+            result_dict["vaccine_status"] = "Vaccine serotype"
+        elif status_set == {"Non-VT"}:
+            result_dict["vaccine_status"] = "Non-vaccine serotype"
+
+    return result_dict
 
 # TODO: Placeholder function
 def get_ipd_status(predicted_serotype: dict, ipd_dict: dict) -> dict:
