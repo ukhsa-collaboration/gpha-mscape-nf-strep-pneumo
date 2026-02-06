@@ -26,9 +26,8 @@ CONFIG = OnyxConfig(
 def get_args():
     """Get command line arguments"""
     parser = argparse.ArgumentParser(
-        prog="s3 file finder",
-        description="""Simple script to query onyx for taxon reports and
-        fastqs in s3 and then download to location specified.
+        prog="Create pneumokity analysis table",
+        description="""Simple script to generate onyx analysis fields from pneumokity results
         """,
     )
     parser.add_argument("--climbid", "-i", type=str, required=True, help="Sample ID")
