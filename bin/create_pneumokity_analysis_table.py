@@ -339,9 +339,9 @@ def main():
     onyx_analysis, exitcode = create_analysis_fields(
         record_id = args.climbid,
         pneumokity_settings = quality_dict,
-        headline_result = result_dict["predicted_serotype"],
         pneumokity_results = result_dict,
         server = args.server,
+        pipeline_info = pipeline_dict
     )
 
     # Exit if analysis object not made correctly
