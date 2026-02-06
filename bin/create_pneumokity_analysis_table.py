@@ -110,7 +110,7 @@ def get_pneumokity_quality_info(quality_file: os.path) -> dict:
     quality_dict = {
         "workflow": quality_info['workflow'],
         "fastq_files_analysed": quality_info['fastq_files'],
-        "kmer_min_percent": quality_info['minpercent'],
+        "kmer_min_percent": str(quality_info['minpercent']),
         "database": quality_info['database'],
     }
 
