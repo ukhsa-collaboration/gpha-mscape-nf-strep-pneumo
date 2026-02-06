@@ -316,13 +316,13 @@ def main():
     exitcode = 0
 
     # Set up log file
-    log_file = Path(args.output) / f"{args.input}_analysis_table_log.txt"
+    log_file = Path(args.output) / f"{args.climbid}_strep_pneumo_analysis_table_log.txt"
     set_up_logger(log_file)
 
     # Paths to pneumokity files
-    quality_file = Path(args.output) / f"{args.input}_quality_system_data.csv"
-    result_file = Path(args.output) / f"{args.input}_result_data.csv"
-    data_file = Path(args.output) / f"{args.input}_alldata.csv"
+    quality_file = Path(args.output) / f"{args.climbid}_quality_system_data.csv"
+    result_file = Path(args.output) / f"{args.climbid}_result_data.csv"
+    data_file = Path(args.output) / f"{args.climbid}_alldata.csv"
 
     # Get information from pneumokity result files
     quality_dict = pat.get_pneumokity_quality_info(quality_file)
@@ -331,8 +331,8 @@ def main():
     #TODO: Add vaccine and ipd status to result dict 
     
     # Create onyx analysis dict
-    onyx_analysis, exitcode = pat.create_analysis_fields(
-        record_id = args.input,
+    onyx_analysis, exitcode = create_analysis_fields(
+        record_id = args.climbid,
         pneumokity_settings = quality_dict,
         headline_result = result_dict["predicted_serotype"],
         pneumokity_results = result_dict,
@@ -346,7 +346,7 @@ def main():
     
     # Add data to analysis table
     if args.store_onyx:
-        onyx_json_file = Path(args.output) / f"{args.input}_strep_serotyping_analysis_fields.json"
+        onyx_json_file = Path(args.output) / f"{args.climbid}_strep_serotyping_analysis_fields.json"
         result_file = onyx_analysis.write_analysis_to_json(result_file=onyx_json_file)
         logging.info("Onyx analysis fields written to file %s", result_file)
         exitcode = 0
