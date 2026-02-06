@@ -249,7 +249,25 @@ def get_ipd_status(predicted_serotype: dict, ipd_dict: dict) -> dict:
     
     return ipd_dict
 
-#TODO: Update package metadata step for nf
+def make_pipeline_dict(pipeline_str) -> dict:
+    """Create dict of pipeline info from input pipeline info string.
+    Arguments:
+        pipeline_str -- Comma separated string of pipeline info in format
+                        'pipeline_name,pipeline_version,pipeline_homepage'
+    Returns:
+        pipeline_dict -- Dictionary containing pipeline information
+    """
+
+    pipeline_list = pipeline_str.split(",")
+    pipeline_dict = {
+        "name": pipeline_list[0],
+        "version": pipeline_list[1],
+        "homePage": pipeline_list[2],
+
+    }
+
+    return pipeline_dict
+
 def create_analysis_fields(
     record_id: str, pneumokity_settings: dict, headline_result: str,
     pneumokity_results: dict, server: str
