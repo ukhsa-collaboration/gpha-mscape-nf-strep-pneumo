@@ -50,7 +50,7 @@ def expected_quality_dict():
         "workflow": "PneumoKITy V1.0",
         "fastq_files_analysed": ['C-123456789.taxon_extracted.human_filtered.fastq.gz', 
                                  'C-123456789.taxon_extracted.human_filtered.fastq.gz'],
-        "kmer_min_percent": 90,
+        "kmer_min_percent": "90",
         "database": "/PneumoKITy/ctvdb",
     }
 
