@@ -31,7 +31,7 @@ def data_file():
 
 @pytest.fixture
 def vaccine_file():
-    file = "tests/test_data/predicted_serotype_vaccine_status.yaml"
+    file = "assets/predicted_serotype_vaccine_status.yaml"
     return file
 
 @pytest.fixture
