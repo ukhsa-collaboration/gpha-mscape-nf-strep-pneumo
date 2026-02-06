@@ -48,6 +48,13 @@ def get_args():
         choices=["mscape", "synthscape"],
         help="Specify server code is being run on",
     )
+    parser.add_argument(
+        "--pipeline_info",
+        "-p",
+        type=str,
+        required=True,
+        help="Comma separated str in format: 'pipeline name, version, homepage'",
+    )
     # Add group options to specify onyx behaviour
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
