@@ -335,8 +335,6 @@ def main():
     # Convert pipeline info to dict
     pipeline_dict = make_pipeline_dict(args.pipeline_info)
 
-    #TODO: Add vaccine and ipd status to result dict 
-    
     # Create onyx analysis dict
     onyx_analysis, exitcode = create_analysis_fields(
         record_id = args.climbid,
@@ -346,12 +344,12 @@ def main():
         server = args.server,
     )
 
-    # Exit if analysis object nor made correctly
+    # Exit if analysis object not made correctly
     if exitcode == 1:
         logging.error("Invalid attribute in analysis fields submitted, check logs for details")
         return exitcode
-    
-    # Add data to analysis table
+
+    # Store analysis table info in json file
     if args.store_onyx:
         onyx_json_file = Path(args.output) / f"{args.climbid}_strep_serotyping_analysis_fields.json"
         result_file = onyx_analysis.write_analysis_to_json(result_file=onyx_json_file)
@@ -359,18 +357,18 @@ def main():
         exitcode = 0
         return exitcode
 
+    # Test push data to onyx
     if args.test_onyx:
         result, exitcode = onyx_analysis.write_analysis_to_onyx(
             server=args.server, dryrun=True, publish_analysis=False
         )
 
+    # Push analysis table to onyx
     if args.prod_onyx:
         result, exitcode = onyx_analysis.write_analysis_to_onyx(
             server=args.server, dryrun=False, publish_analysis=False
         )
 
-    return exitcode
-    
     return exitcode
 
 if __name__ == "__main__":
