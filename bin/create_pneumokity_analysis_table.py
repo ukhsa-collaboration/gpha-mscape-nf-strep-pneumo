@@ -325,8 +325,15 @@ def main():
     data_file = Path(args.output) / f"{args.climbid}_alldata.csv"
 
     # Get information from pneumokity result files
-    quality_dict = pat.get_pneumokity_quality_info(quality_file)
-    result_dict = pat.get_pneumokity_results(result_file, data_file)
+    quality_dict = get_pneumokity_quality_info(quality_file)
+    result_dict = get_pneumokity_results(result_file, data_file)
+
+    # Check if analysis failed or result was obtained
+    result_dict = get_analysis_status(result_dict)
+    result_dict = get_vaccine_status(result_dict, args.vaccine_serotypes)
+
+    # Convert pipeline info to dict
+    pipeline_dict = make_pipeline_dict(args.pipeline_info)
 
     #TODO: Add vaccine and ipd status to result dict 
     
