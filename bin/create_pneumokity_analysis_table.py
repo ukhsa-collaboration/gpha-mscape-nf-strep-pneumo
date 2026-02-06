@@ -269,8 +269,8 @@ def make_pipeline_dict(pipeline_str) -> dict:
     return pipeline_dict
 
 def create_analysis_fields(
-    record_id: str, pneumokity_settings: dict, headline_result: str,
-    pneumokity_results: dict, server: str
+    record_id: str, pneumokity_settings: dict,
+    pneumokity_results: dict, server: str, pipeline_info: dict
 ) -> dict:
     """Set up fields dictionary used to populate analysis table containing
     Streptococcus pneumoniae serotyping results.
@@ -290,8 +290,12 @@ def create_analysis_fields(
         analysis_name="ukhsa-streptococcus-pneumoniae-serotyping",
         analysis_description="This is an analysis to serotype strep pneumo in metagenomic samples",
     )
-    #onyx_analysis.add_package_metadata(package_name="mscape-sample-qc") # Check amr for how added
+    onyx_analysis.pipeline_name = pipeline_info["name"]
+    onyx_analysis.pipeline_version = pipeline_info["version"]
+    onyx_analysis.pipeline_url = pipeline_info["homePage"]
+
     methods_fail = onyx_analysis.add_methods(methods_dict=pneumokity_settings)
+    headline_result = pneumokity_results["predicted_serotype"]
     results_fail = onyx_analysis.add_results(top_result=headline_result, results_dict=pneumokity_results)
     onyx_analysis.add_server_records(sample_id=record_id, server_name=server)
     required_field_fail, attribute_fail = onyx_analysis.check_analysis_object(
