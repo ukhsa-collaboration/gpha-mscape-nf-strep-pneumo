@@ -21,13 +21,12 @@ workflow LONGREAD_KMER_SEROTYPING {
             }
         RUN_KRACTOR(val_taxid, ch_kractor_input)
         RUN_PNEUMOKITY(RUN_KRACTOR.out.kractor_results)
-
     }
     else {
         RUN_PNEUMOKITY(ch_reads)
     }
 
     emit:
-    pneumokity_files = RUN_PNEUMOKITY.out.pneumokity_results // channel: [ path(csv), path(csv), path(csv)]
+    pneumokity_files = RUN_PNEUMOKITY.out.pneumokity_results // channel: [val(meta), path(csv), path(csv), path(csv)]
 
 }
