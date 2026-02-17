@@ -30,11 +30,18 @@ workflow {
             kraken_report: params.extract_reads ? [meta, file(row.kraken_report)] : []
     }
 
+    def ch_vaccine_serotypes = Channel.of(
+        file("${projectDir}/assets/predicted_serotype_vaccine_status.yaml")
+    )
+
     LONGREAD_TYPING(
         ch_sample_inputs.kraken_output,
         ch_sample_inputs.kraken_report,
         ch_sample_inputs.reads,
         params.extract_reads,
-        params.taxid
+        params.taxid,
+        ch_vaccine_serotypes,
+        params.server
     )
+
 }
