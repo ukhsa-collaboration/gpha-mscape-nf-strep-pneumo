@@ -22,7 +22,7 @@ process RUN_PNEUMOKITY {
     tuple val(meta), path(filtered_fastq)
 
     output:
-    tuple path("pneumo_capsular_typing/${meta.id}_alldata.csv"), path("pneumo_capsular_typing/${meta.id}_quality_system_data.csv"), path("pneumo_capsular_typing/${meta.id}_result_data.csv"), emit: pneumokity_results
+    tuple val(meta), path("pneumo_capsular_typing/${meta.id}_alldata.csv"), path("pneumo_capsular_typing/${meta.id}_quality_system_data.csv"), path("pneumo_capsular_typing/${meta.id}_result_data.csv"), emit: pneumokity_results
 
     script:
     """
