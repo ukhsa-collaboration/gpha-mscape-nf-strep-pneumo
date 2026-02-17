@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 
 include { LONGREAD_KMER_SEROTYPING } from '../subworkflows/longread_kmer_serotyping'
+include { COLLATE_SEROTYPING_RESULTS } from '../subworkflows/collate_serotyping_results'
 
 workflow LONGREAD_TYPING {
     take:
@@ -9,6 +10,8 @@ workflow LONGREAD_TYPING {
     ch_reads
     extract_reads
     taxid
+    ch_vaccine_serotypes
+    server
 
     main:
     LONGREAD_KMER_SEROTYPING(
@@ -19,6 +22,13 @@ workflow LONGREAD_TYPING {
         taxid
     )
 
+    COLLATE_SEROTYPING_RESULTS(
+        LONGREAD_KMER_SEROTYPING.out.pneumokity_files,
+        ch_vaccine_serotypes,
+        server
+    )
+
     emit:
     pneumokity_files = LONGREAD_KMER_SEROTYPING.out.pneumokity_files
+    pneumokity_summary = COLLATE_SEROTYPING_RESULTS.out.pneumokity_summary
 }
