@@ -14,15 +14,15 @@ process RUN_PNEUMOKITY {
     container 'docker.io/nanozoo/pneumokity:1.0--ec3a71f'
     cpus 2
     memory '2GB'
-    tag "${climb_id}"
-    publishDir "$params.outdir", mode: 'copy'
+    tag "${meta.id}"
+    publishDir "${params.outdir}/${meta.id}", mode: params.publish_dir_mode
     errorStrategy 'ignore'
 
     input:
-    tuple val(climb_id), path(filtered_fastq)
+    tuple val(meta), path(filtered_fastq)
 
     output:
-    tuple path("pneumo_capsular_typing/${climb_id}_alldata.csv"), path("pneumo_capsular_typing/${climb_id}_quality_system_data.csv"), path("pneumo_capsular_typing/${climb_id}_result_data.csv"), emit: pneumokity_results
+    tuple path("pneumo_capsular_typing/${meta.id}_alldata.csv"), path("pneumo_capsular_typing/${meta.id}_quality_system_data.csv"), path("pneumo_capsular_typing/${meta.id}_result_data.csv"), emit: pneumokity_results
 
     script:
     """
