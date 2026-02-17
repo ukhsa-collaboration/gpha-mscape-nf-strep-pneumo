@@ -14,22 +14,25 @@ process RUN_KRACTOR {
             - exit_code: Exit status for the program.
             - result_file: Path to the onyx analysis json file.
     */
-    container 'quay.io/biocontainers/kractor:3.1.0--h4349ce8_0'
+    container 'quay.io/biocontainers/kractor:4.0.0--h4349ce8_0'
     cpus 2
     memory '2GB'
-    tag "${climb_id}"
-    publishDir "$params.outdir/filtered_fastqs", mode: 'copy'
+    tag "${meta.id}"
+    publishDir "${params.outdir}/${meta.id}", mode: params.publish_dir_mode
 
     input:
     val taxid
-    tuple val(climb_id), path(kraken_stdout), path(kraken_report), path(fastq)
+    tuple val(meta), path(kraken_stdout), path(kraken_report), path(fastq)
 
     output:
-    tuple val("${climb_id}"), path("${climb_id}.taxon_extracted.human_filtered.fastq.gz"), emit: kractor_results
+    tuple val(meta), path("${meta.id}.taxon_extracted.human_filtered.fastq.gz"), emit: kractor_results
+    path("${meta.id}.kractor.summary.txt"), emit: kractor_summary
 
     script:
     """
-    kractor -i $fastq -k $kraken_stdout -r $kraken_report -t $taxid --children  -o ${climb_id}.taxon_extracted.human_filtered.fastq.gz
+    kractor -i $fastq -k $kraken_stdout -r $kraken_report -t $taxid \\
+    --children  -o ${meta.id}.taxon_extracted.human_filtered.fastq.gz \\
+    --summary > ${meta.id}.kractor.summary.txt
     """
 
    }
