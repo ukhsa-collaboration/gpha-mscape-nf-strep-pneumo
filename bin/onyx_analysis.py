@@ -106,6 +106,7 @@ def set_up_logger(stdout_file):
 
     return logger
 
+
 # General functions
 def read_analysis_id_from_file(analysis_id_file: Path, exitcode: int) -> tuple[str | None, int]:
     """Function to read in analysis ID from file. If file not correct structure or can't be
@@ -125,7 +126,11 @@ def read_analysis_id_from_file(analysis_id_file: Path, exitcode: int) -> tuple[s
             if len(lines) == 1:
                 analysis_id = lines[0]
             else:
-                logging.error("Analysis_id_file should contain 1 line: %s contained %s lines", analysis_id_file, len(lines))
+                logging.error(
+                    "Analysis_id_file should contain 1 line: %s contained %s lines",
+                    analysis_id_file,
+                    len(lines),
+                )
                 exitcode = 1
                 return None, exitcode
     except Exception as error:
@@ -231,7 +236,7 @@ def main():
 
         with Path(analysis_id_file).open("w") as file:
             file.write(f"{analysis_id}")
-        logging.info(f"Analysis ID written to file %s", analysis_id_file)
+        logging.info("Analysis ID written to file %s", analysis_id_file)
 
         return exitcode
 
@@ -246,7 +251,7 @@ def main():
             return exitcode
         # Write s3 locations to onyx analysis json
         s3_json = write_s3_locations_to_json(s3_locations, analysis_id, args.bucket, args.output)
-        logging.info(f"s3 information written to file %s", s3_json)
+        logging.info("s3 information written to file %s", s3_json)
 
         return exitcode
 
@@ -295,6 +300,7 @@ def main():
         return exitcode
 
     return exitcode
+
 
 if __name__ == "__main__":
     sys.exit(main())
