@@ -351,7 +351,7 @@ def main():
 
     # Store analysis table info in json file
     if args.store_onyx:
-        onyx_json_file = Path(args.output) / f"{args.climbid}_strep_serotyping_analysis_fields.json"
+        onyx_json_file = Path(args.output) / f"{args.climbid}.serotyping.analysis_fields.json"
         result_file = onyx_analysis.write_analysis_to_json(result_file=onyx_json_file)
         logging.info("Onyx analysis fields written to file %s", result_file)
         exitcode = 0
