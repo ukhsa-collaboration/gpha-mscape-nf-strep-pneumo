@@ -100,3 +100,58 @@ def set_up_logger(stdout_file):
     logger.addHandler(out_handler)
 
     return logger
+
+
+# Main script
+def main():
+    "Main function to handle onyx helper commands"
+    args = get_args()
+    exitcode = 0
+
+    # Set up log file
+    log_file = Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.log.txt"
+    set_up_logger(log_file)
+
+    if args.command == "write":
+        onyx_analysis = oa.OnyxAnalysis()
+        # Read in analysis json
+        try:
+            onyx_analysis.read_analysis_from_json(args.input_json)
+            logging.info("Analysis table successfully read from json: %s", args.input_json)
+        except:
+            logging.error("Couldn't read analysis from json: %s", args.input_json)
+            exitcode = 1
+            return exitcode
+        # Check correctly formatted
+        check_status_list = onyx_analysis.check_analysis_object(publish_analysis=False)
+        if any(status for status in check_status_list): # noqa SIM108
+            logging.error("Analysis fields read in from json failed checks")
+            exitcode = 1
+            return exitcode
+        # Write to onyx
+        analysis_id, exitcode = onyx_analysis.write_analysis_to_onyx(server=args.server,
+                                                                     dryrun=True, # Amend to False when ready to run
+                                                                     publish_analysis=False)
+        if exitcode == 1:
+            logging.error("Unsuccessful write to onyx, check logs for details.")
+        # Write analysis ID to file
+        analysis_id_file = Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
+
+        with Path(analysis_id_file).open("w") as file:
+            file.write(f"{analysis_id}")
+
+        return exitcode
+
+    elif args.command == "s3_upload":
+        pass
+
+    elif args.command == "update":
+        pass
+
+    elif args.command == "publish":
+        pass
+
+    return exitcode
+
+if __name__ == "__main__":
+    sys.exit(main())
