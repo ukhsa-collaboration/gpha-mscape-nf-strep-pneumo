@@ -193,7 +193,7 @@ def write_s3_locations_to_json(
     """
     onyx_analysis = oa.OnyxAnalysis()
     # Add files to outputs field - if one file use whole URI, if multiple files use prefix
-    if(len(s3_locations) == 1):
+    if len(s3_locations) == 1:
         s3_output_location = f"{s3_locations[0]}"
         onyx_analysis.outputs = s3_output_location
     else:
@@ -206,6 +206,7 @@ def write_s3_locations_to_json(
     s3_json = onyx_analysis.write_analysis_to_json(s3_file)
 
     return s3_json
+
 
 # Main script
 def main():
@@ -229,18 +230,22 @@ def main():
             return exitcode
         # Check correctly formatted
         check_status_list = onyx_analysis.check_analysis_object(publish_analysis=False)
-        if any(status for status in check_status_list): # noqa SIM108
+        if any(status for status in check_status_list):  # noqa SIM108
             logging.error("Analysis fields read in from json failed checks")
             exitcode = 1
             return exitcode
         # Write to onyx
-        analysis_id, exitcode = onyx_analysis.write_analysis_to_onyx(server=args.server,
-                                                                     dryrun=True, # Amend to False when ready to run
-                                                                     publish_analysis=False)
+        analysis_id, exitcode = onyx_analysis.write_analysis_to_onyx(
+            server=args.server,
+            dryrun=True,  # Amend to False when ready to run
+            publish_analysis=False,
+        )
         if exitcode != 0:
             logging.error("Unsuccessful write to onyx, check logs for details.")
         # Write analysis ID to file
-        analysis_id_file = Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
+        analysis_id_file = (
+            Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
+        )
 
         with Path(analysis_id_file).open("w") as file:
             file.write(f"{analysis_id}")
@@ -278,14 +283,18 @@ def main():
             exitcode = 1
             return exitcode
         # Write to onyx
-        analysis_id, exitcode = onyx_analysis.update_onyx_analysis(server=args.server,
-                                                                   analysis_id=analysis_id,
-                                                                   dryrun=True, # Amend to False when ready to run
-                                                                   publish_analysis=False)
+        analysis_id, exitcode = onyx_analysis.update_onyx_analysis(
+            server=args.server,
+            analysis_id=analysis_id,
+            dryrun=True,  # Amend to False when ready to run
+            publish_analysis=False,
+        )
         if exitcode != 0:
             logging.error("Unsuccessful write to onyx, check logs for details.")
         # Write analysis ID to file
-        analysis_id_file = Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
+        analysis_id_file = (
+            Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
+        )
         with Path(analysis_id_file).open("w") as file:
             file.write(f"{analysis_id}")
 
@@ -298,10 +307,12 @@ def main():
             return exitcode
         # Update publish status
         onyx_analysis = oa.OnyxAnalysis()
-        analysis_id, exitcode = onyx_analysis.update_onyx_analysis(server=args.server,
-                                                                   analysis_id=analysis_id,
-                                                                   dryrun=True, # Amend to False when ready to run
-                                                                   publish_analysis=True)
+        analysis_id, exitcode = onyx_analysis.update_onyx_analysis(
+            server=args.server,
+            analysis_id=analysis_id,
+            dryrun=True,  # Amend to False when ready to run
+            publish_analysis=True,
+        )
         if exitcode != 0:
             logging.error("Unsuccessful publishing of onyx analysis, check logs for details.")
 
