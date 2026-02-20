@@ -140,7 +140,10 @@ def read_analysis_id_from_file(analysis_id_file: Path, exitcode: int) -> tuple[s
 
     return analysis_id, exitcode
 
-def upload_files_to_s3(files_for_upload: list[Path], analysis_id: str, bucket: str) -> tuple[list,int]:
+
+def upload_files_to_s3(
+    files_for_upload: list[Path], analysis_id: str, bucket: str
+) -> tuple[list, int]:
     """Function for attempting to write a list of files to s3. Returns a non-zero
     exitcode if unsuccessful.
     Arguments:
@@ -155,24 +158,29 @@ def upload_files_to_s3(files_for_upload: list[Path], analysis_id: str, bucket: s
     s3_client = s3f.set_up_s3_client()
 
     # Get paths for files to be uploaded
-    local_file_list = files_for_upload.split(',')
+    local_file_list = files_for_upload.split(",")
 
     # List to store s3 URIs
     s3_file_list = []
 
     # Attempt upload to s3
     for file in local_file_list:
-        s3_uri, exitcode = s3f.upload_file_to_s3(analysis_id=analysis_id, bucket=bucket, file_for_upload=Path(file), s3_client=s3_client)
+        s3_uri, exitcode = s3f.upload_file_to_s3(
+            analysis_id=analysis_id, bucket=bucket, file_for_upload=Path(file), s3_client=s3_client
+        )
         s3_file_list.append(s3_uri)
         if exitcode == 0:
             logging.info("S3 transfer complete for %s", file)
         else:
             logging.error("S3 transfer failed for %s, see logs for details", file)
-            return None, exitcode # Exit s3 upload attempts if any fail? Or try other files?
+            return None, exitcode  # Exit s3 upload attempts if any fail? Or try other files?
 
     return s3_file_list, exitcode
 
-def write_s3_locations_to_json(s3_locations: list, analysis_id: str, bucket: str, outdir: Path) -> Path:
+
+def write_s3_locations_to_json(
+    s3_locations: list, analysis_id: str, bucket: str, outdir: Path
+) -> Path:
     """Function to write the s3 keys for uploaded files to an output file
     in OnyxAnalysis structure json.
     Arguments:
