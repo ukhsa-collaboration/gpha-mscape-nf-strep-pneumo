@@ -243,7 +243,32 @@ def main():
         return exitcode
 
     elif args.command == "update":
-        pass
+        # Read in analysis id from file
+        analysis_id, exitcode = read_analysis_id_from_file(args.analysis_id, exitcode)
+        if exitcode != 0:
+            return exitcode
+        # Read in analysis json
+        onyx_analysis = oa.OnyxAnalysis()
+        try:
+            onyx_analysis.read_analysis_from_json(args.input_json)
+            logging.info("Analysis table successfully read from json: %s", args.input_json)
+        except:
+            logging.error("Couldn't read analysis from json: %s", args.input_json)
+            exitcode = 1
+            return exitcode
+        # Write to onyx
+        analysis_id, exitcode = onyx_analysis.update_onyx_analysis(server=args.server,
+                                                                   analysis_id=analysis_id,
+                                                                   dryrun=True, # Amend to False when ready to run
+                                                                   publish_analysis=False)
+        if exitcode != 0:
+            logging.error("Unsuccessful write to onyx, check logs for details.")
+        # Write analysis ID to file
+        analysis_id_file = Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
+        with Path(analysis_id_file).open("w") as file:
+            file.write(f"{analysis_id}")
+
+        return exitcode
 
     elif args.command == "publish":
         pass
