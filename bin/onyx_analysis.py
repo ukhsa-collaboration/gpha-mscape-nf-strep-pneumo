@@ -125,8 +125,8 @@ def read_analysis_id_from_file(analysis_id_file: Path, exitcode: int) -> tuple[s
                 logging.error("Analysis_id_file should contain 1 line: %s contained %s lines", analysis_id_file, len(lines))
                 exitcode = 1
                 return None, exitcode
-    except:
-        logging.error("Couldn't read analysis_id from file: %s", analysis_id_file)
+    except Exception as error:
+        logging.error("Couldn't read analysis_id from file: %s, %s", analysis_id_file, error)
         exitcode = 1
         return None, exitcode
 
@@ -204,8 +204,8 @@ def main():
         try:
             onyx_analysis.read_analysis_from_json(args.input_json)
             logging.info("Analysis table successfully read from json: %s", args.input_json)
-        except:
-            logging.error("Couldn't read analysis from json: %s", args.input_json)
+        except Exception as error:
+            logging.error("Couldn't read analysis from json: %s, %s", args.input_json, error)
             exitcode = 1
             return exitcode
         # Check correctly formatted
@@ -252,8 +252,8 @@ def main():
         try:
             onyx_analysis.read_analysis_from_json(args.input_json)
             logging.info("Analysis table successfully read from json: %s", args.input_json)
-        except:
-            logging.error("Couldn't read analysis from json: %s", args.input_json)
+        except Exception as error:
+            logging.error("Couldn't read analysis from json: %s, %s", args.input_json, error)
             exitcode = 1
             return exitcode
         # Write to onyx
