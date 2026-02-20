@@ -147,7 +147,10 @@ def upload_files_to_s3(files_for_upload: list[Path], analysis_id: str, bucket: s
     s3_client = s3f.set_up_s3_client()
 
     # Get paths for files to be uploaded
-    local_file_list = args.input_files.split(',')
+    local_file_list = files_for_upload.split(',')
+
+    # List to store s3 URIs
+    s3_file_list = []
 
     # Attempt upload to s3
     for file in local_file_list:
@@ -175,14 +178,14 @@ def write_s3_locations_to_json(s3_locations: list, analysis_id: str, bucket: str
     onyx_analysis = oa.OnyxAnalysis()
     # Add files to outputs field - if one file use whole URI, if multiple files use prefix
     if(len(s3_locations) == 1):
-        s3_output_location = f"{s3_file_list[0]}"
+        s3_output_location = f"{s3_locations[0]}"
         onyx_analysis.outputs = s3_output_location
     else:
         s3_output_location = f"s3://{bucket}/{analysis_id}"
         onyx_analysis.outputs = s3_output_location
     # TODO: Handle HTML/report
     # Write s3 locations to onyx analysis json
-    s3_file = Path(outdir) / f"{climbid}.s3_paths.analysis_fields.json"
+    s3_file = Path(outdir) / f"{analysis_id}.s3_paths.analysis_fields.json"
 
     s3_json = onyx_analysis.write_analysis_to_json(s3_file)
 
