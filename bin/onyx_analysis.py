@@ -57,31 +57,31 @@ def get_args():
     # Onyx write
     onyx_write_subparser = subparsers.add_parser("write", parents=[base_subparser],
                                      help = "Write initial analysis table to onyx")
-    onyx_write_subparser.add_argument("--input-json", "-j", type=Path, 
+    onyx_write_subparser.add_argument("--input-json", "-j", type=Path,
                               help="Path to input file with onyx analysis json")
 
     # s3 push
     s3_subparser = subparsers.add_parser("s3_upload", parents=[base_subparser],
                                     help = "Push analysis files to s3")
-    s3_subparser.add_argument("--bucket", "-b", type=Path, 
+    s3_subparser.add_argument("--bucket", "-b", type=Path,
                               help="s3 bucket to push files to")
-    s3_subparser.add_argument("--analysis-id", "-a", type=str, 
-                              help="Analysis ID for analysis table")
-    s3_subparser.add_argument("--input-json", "-j", type=Path, 
-                              help="Path to files to be uploaded to s3")
+    s3_subparser.add_argument("--analysis-id", "-a", type=str,
+                              help="File containing analysis ID")
+    s3_subparser.add_argument("--input-files", "-f", type=str,
+                              help="Comma separated list of files to be uploaded to s3")
     # Onyx update
     onyx_update_subparser = subparsers.add_parser("update", parents=[base_subparser],
                                     help = "Update onyx analysis with s3 paths")
-    onyx_update_subparser.add_argument("--analysis-id", "-a", type=str, 
-                              help="Analysis ID for analysis table")
-    onyx_update_subparser.add_argument("--input-files", "-f", type=Path, 
+    onyx_update_subparser.add_argument("--analysis-id", "-a", type=str,
+                              help="File containing analysis ID")
+    onyx_update_subparser.add_argument("--input-json", "-j", type=Path,
                               help="Path to file of s3 file locations")
 
     # Onyx publish
     onyx_publish_subparser = subparsers.add_parser("publish", parents=[base_subparser],
                                     help = "Publish onyx analysis")
-    onyx_publish_subparser.add_argument("--analysis-id", "-a", type=str, 
-                              help="Analysis ID for analysis table")
+    onyx_publish_subparser.add_argument("--analysis-id", "-a", type=str,
+                              help="File containing analysis ID")
 
     return parser.parse_args()
 
