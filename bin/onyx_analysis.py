@@ -218,7 +218,7 @@ def main():
         analysis_id, exitcode = onyx_analysis.write_analysis_to_onyx(server=args.server,
                                                                      dryrun=True, # Amend to False when ready to run
                                                                      publish_analysis=False)
-        if exitcode == 1:
+        if exitcode != 0:
             logging.error("Unsuccessful write to onyx, check logs for details.")
         # Write analysis ID to file
         analysis_id_file = Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
