@@ -229,7 +229,18 @@ def main():
         return exitcode
 
     elif args.command == "s3_upload":
-        pass
+        # Read in analysis id from file
+        analysis_id, exitcode = read_analysis_id_from_file(args.analysis_id, exitcode)
+        if exitcode != 0:
+            return exitcode
+        # Upload files to s3
+        s3_locations, exitcode = upload_files_to_s3(args.input_files, analysis_id, args.bucket)
+        if exitcode != 0:
+            return exitcode
+        # Write s3 locations to onyx analysis json
+        s3_json = write_s3_locations_to_json(s3_locations, analysis_id, args.bucket, args.output)
+
+        return exitcode
 
     elif args.command == "update":
         pass
