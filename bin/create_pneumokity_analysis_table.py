@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-"""Module containing functions required to add strep pneumo serotyping
-results to an onyx analysis table.
+"""Script and associated functions to take strep pneumo serotyping
+results and create an onyx analysis table format json file.
 """
 
 # Imports
