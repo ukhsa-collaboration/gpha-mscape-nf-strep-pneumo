@@ -271,7 +271,20 @@ def main():
         return exitcode
 
     elif args.command == "publish":
-        pass
+        # Read in analysis id from file
+        analysis_id, exitcode = read_analysis_id_from_file(args.analysis_id, exitcode)
+        if exitcode != 0:
+            return exitcode
+        # Update publish status
+        onyx_analysis = oa.OnyxAnalysis()
+        analysis_id, exitcode = onyx_analysis.update_onyx_analysis(server=args.server,
+                                                                   analysis_id=analysis_id,
+                                                                   dryrun=True, # Amend to False when ready to run
+                                                                   publish_analysis=True)
+        if exitcode != 0:
+            logging.error("Unsuccessful publishing of onyx analysis, check logs for details.")
+
+        return exitcode
 
     return exitcode
 
