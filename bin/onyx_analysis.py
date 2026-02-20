@@ -5,6 +5,7 @@ and add files to s3.
 """
 
 # Imports
+import boto3
 import datetime
 import json
 import logging
@@ -17,6 +18,7 @@ import pandas as pd
 from ast import literal_eval
 from onyx import OnyxClient, OnyxConfig, OnyxEnv
 from onyx_analysis_helper import onyx_analysis_helper_functions as oa
+from onyx_analysis_helper import s3_functions as s3f
 
 # Set up onyx config
 CONFIG = OnyxConfig(
@@ -101,6 +103,90 @@ def set_up_logger(stdout_file):
 
     return logger
 
+# General functions
+def read_analysis_id_from_file(analysis_id_file: Path, exitcode: int) -> tuple[str | None, int]:
+    """Function to read in analysis ID from file. If file not correct structure or can't be
+    found, a non-zero exitcode is returned.
+    Arguments:
+        analysis_id_file -- Text file containing analysis ID
+        exitcode -- Exitcode from parent code - should be 0
+    Returns:
+        analysis_id -- Analysis ID from onyx
+        exitcode -- Exitcode for function, remains as 0 if analysis ID read correctly
+    """
+    try:
+        with Path(analysis_id_file).open("r") as file:
+            lines = [line.rstrip() for line in file]
+            # Need code to catch if for some reason the analysis_id_file has >1 analysis_id in it
+            # e.g. something like if len(lines) != 1: crash with exitcode=1
+            if len(lines) == 1:
+                analysis_id = lines[0]
+            else:
+                logging.error("Analysis_id_file should contain 1 line: %s contained %s lines", analysis_id_file, len(lines))
+                exitcode = 1
+                return None, exitcode
+    except:
+        logging.error("Couldn't read analysis_id from file: %s", analysis_id_file)
+        exitcode = 1
+        return None, exitcode
+
+    return analysis_id, exitcode
+
+def upload_files_to_s3(files_for_upload: list[Path], analysis_id: str, bucket: str) -> tuple[list,int]:
+    """Function for attempting to write a list of files to s3. Returns a non-zero
+    exitcode if unsuccessful.
+    Arguments:
+        files_for_upload -- List of files to be uploaded to s3
+        analysis_id -- Analysis ID to include in s3 file name
+        bucket -- Bucket to upload files to
+    Returns:
+        s3_locations -- List of locations of files in s3
+        exitcode -- Exitcode for function, remains as 0 if all files successfully added to s3
+    """
+    # Set up s3 client
+    s3_client = s3f.set_up_s3_client()
+
+    # Get paths for files to be uploaded
+    local_file_list = args.input_files.split(',')
+
+    # Attempt upload to s3
+    for file in local_file_list:
+        s3_uri, exitcode = s3f.upload_file_to_s3(analysis_id=analysis_id, bucket=bucket, file_for_upload=Path(file), s3_client=s3_client)
+        s3_file_list.append(s3_uri)
+        if exitcode == 0:
+            logging.info("S3 transfer complete for %s", file)
+        else:
+            logging.error("S3 transfer failed for %s, see logs for details", file)
+            return None, exitcode # Exit s3 upload attempts if any fail? Or try other files?
+
+    return s3_file_list, exitcode
+
+def write_s3_locations_to_json(s3_locations: list, analysis_id: str, bucket: str, outdir: Path) -> Path:
+    """Function to write the s3 keys for uploaded files to an output file
+    in OnyxAnalysis structure json.
+    Arguments:
+        s3_locations -- List containing s3 uri's for all uploaded files
+        analysis_id -- Analysis ID
+        bucket -- Bucket s3 files were uploaded to
+        outdir -- Location to store s3 location json file
+    Returns:
+        s3_locations_file -- File containing onyx analysis json with s3 URI
+    """
+    onyx_analysis = oa.OnyxAnalysis()
+    # Add files to outputs field - if one file use whole URI, if multiple files use prefix
+    if(len(s3_locations) == 1):
+        s3_output_location = f"{s3_file_list[0]}"
+        onyx_analysis.outputs = s3_output_location
+    else:
+        s3_output_location = f"s3://{bucket}/{analysis_id}"
+        onyx_analysis.outputs = s3_output_location
+    # TODO: Handle HTML/report
+    # Write s3 locations to onyx analysis json
+    s3_file = Path(outdir) / f"{climbid}.s3_paths.analysis_fields.json"
+
+    s3_json = onyx_analysis.write_analysis_to_json(s3_file)
+
+    return s3_json
 
 # Main script
 def main():
