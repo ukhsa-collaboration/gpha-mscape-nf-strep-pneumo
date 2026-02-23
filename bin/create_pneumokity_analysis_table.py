@@ -316,7 +316,7 @@ def main():
     exitcode = 0
 
     # Set up log file
-    log_file = Path(args.output) / f"{args.climbid}.serotyping_analysis_table.log.txt"
+    log_file = Path(args.output) / f"{args.climbid}.serotyping.analysis_fields.log.txt"
     set_up_logger(log_file)
 
     # Paths to pneumokity files
@@ -351,7 +351,7 @@ def main():
 
     # Store analysis table info in json file
     if args.store_onyx:
-        onyx_json_file = Path(args.output) / f"{args.climbid}.serotyping_analysis_table.json"
+        onyx_json_file = Path(args.output) / f"{args.climbid}.serotyping.analysis_fields.json"
         result_file = onyx_analysis.write_analysis_to_json(result_file=onyx_json_file)
         logging.info("Onyx analysis fields written to file %s", result_file)
         exitcode = 0

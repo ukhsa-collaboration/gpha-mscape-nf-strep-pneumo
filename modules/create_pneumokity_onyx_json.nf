@@ -27,8 +27,8 @@ process CREATE_PNEUMOKITY_ONYX_JSON {
     val server
 
     output:
-    tuple val(meta), path("${meta.id}.serotyping_analysis_table.json"), emit: pneumokity_summary
-    path "${meta.id}.serotyping_analysis_table.log.txt", emit: logs
+    tuple val(meta), path("${meta.id}.serotyping.analysis_fields.json"), emit: pneumokity_summary
+    path "${meta.id}.serotyping.analysis_fields.log.txt", emit: logs
 
     script:
     """
