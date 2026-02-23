@@ -263,6 +263,7 @@ def main():
         )
         if exitcode != 0:
             logging.error("Unsuccessful write to onyx, check logs for details.")
+            return exitcode
         # Write analysis ID to file
         analysis_id_file = (
             Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
@@ -311,6 +312,7 @@ def main():
         )
         if exitcode != 0:
             logging.error("Unsuccessful write to onyx, check logs for details.")
+            return exitcode
         # Write analysis ID to file
         analysis_id_file = (
             Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
