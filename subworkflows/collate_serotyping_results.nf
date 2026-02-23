@@ -1,20 +1,31 @@
 #!/usr/bin/env nextflow
 
-include { ADD_PNEUMOKITY_RESULTS_ONYX } from '../modules/add_results_onyx'
+include { CREATE_PNEUMOKITY_ONYX_JSON } from '../modules/create_pneumokity_onyx_json'
+include { ONYX_WRITE } from '../modules/onyx_write'
+include { S3_UPLOAD } from '../modules/s3_upload'
+include { ONYX_UPDATE } from '../modules/onyx_update'
+include { ONYX_PUBLISH } from '../modules/onyx_publish'
+
 
 workflow COLLATE_SEROTYPING_RESULTS {
     take:
     ch_pneumokity_files  // channel: [val(meta), path(csv), path(csv), path(csv)]
     ch_vaccine_serotypes // channel: [path(yaml)]
     server // val: name of server running pipeline on
+    bucket // val: name of bucket to upload results to
 
     main:
     if (ch_pneumokity_files) {
-        ADD_PNEUMOKITY_RESULTS_ONYX(ch_pneumokity_files, ch_vaccine_serotypes, server)
+        CREATE_PNEUMOKITY_ONYX_JSON(ch_pneumokity_files, ch_vaccine_serotypes, server)
     }
 
+    ONYX_WRITE(CREATE_PNEUMOKITY_ONYX_JSON.out.pneumokity_summary, server)
+    S3_UPLOAD(ch_pneumokity_files, server, bucket, ONYX_WRITE.out.analysis_id)
+    ONYX_UPDATE(server, ONYX_WRITE.out.analysis_id, S3_UPLOAD.out.s3_locations)
+    ONYX_PUBLISH(server, ONYX_UPDATE.out.analysis_id)
+
     emit:
-    pneumokity_analysis_id = ADD_PNEUMOKITY_RESULTS_ONYX.out.analysis_id // channel: [val(meta), val(analysis_id)]
-    pneumokity_summary = ADD_PNEUMOKITY_RESULTS_ONYX.out.pneumokity_summary
+    pneumokity_summary = CREATE_PNEUMOKITY_ONYX_JSON.out.pneumokity_summary // channel: [val(meta), path(pneumokity_json)]
+    pneumokity_analysis_id = ONYX_PUBLISH.out.analysis_id
 
 }
