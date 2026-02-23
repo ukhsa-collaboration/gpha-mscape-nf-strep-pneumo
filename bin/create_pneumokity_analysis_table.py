@@ -5,17 +5,16 @@ results and create an onyx analysis table format json file.
 """
 
 # Imports
-import datetime
-import json
+import argparse
 import logging
-import yaml
 import os
 import sys
-import argparse
-from pathlib import Path
-import pandas as pd
 from ast import literal_eval
-from onyx import OnyxClient, OnyxConfig, OnyxEnv
+from pathlib import Path
+
+import pandas as pd
+import yaml
+from onyx import OnyxConfig, OnyxEnv
 from onyx_analysis_helper import onyx_analysis_helper_functions as oa
 
 # Set up onyx config
@@ -23,6 +22,7 @@ CONFIG = OnyxConfig(
     domain=os.environ[OnyxEnv.DOMAIN],
     token=os.environ[OnyxEnv.TOKEN],
 )
+
 
 # Functions
 # Args and logging
@@ -38,7 +38,11 @@ def get_args():
         "--output", "-o", type=str, required=True, help="Folder to save downloaded files to"
     )
     parser.add_argument(
-        "--vaccine-serotypes", "-vt", type=str, required=True, help="Path to yaml containing vaccine serotype information"
+        "--vaccine-serotypes",
+        "-vt",
+        type=str,
+        required=True,
+        help="Path to yaml containing vaccine serotype information",
     )
     parser.add_argument(
         "--server",
@@ -94,6 +98,7 @@ def set_up_logger(stdout_file):
 
     return logger
 
+
 # Functions to extract info from pneumokity results
 def get_pneumokity_quality_info(quality_file: os.path) -> dict:
     """Parses the quality system data file produced by pneumokity to extract
@@ -108,13 +113,14 @@ def get_pneumokity_quality_info(quality_file: os.path) -> dict:
 
     # Pull out relevant fields to make dict
     quality_dict = {
-        "workflow": quality_info['workflow'],
-        "fastq_files_analysed": quality_info['fastq_files'],
-        "kmer_min_percent": str(quality_info['minpercent']),
-        "database": quality_info['database'],
+        "workflow": quality_info["workflow"],
+        "fastq_files_analysed": quality_info["fastq_files"],
+        "kmer_min_percent": str(quality_info["minpercent"]),
+        "database": quality_info["database"],
     }
 
     return quality_dict
+
 
 def get_pneumokity_results(result_file: os.path, all_data_file: os.path) -> dict:
     """Parses the result_data file from pneumokity to extract key results.
@@ -125,12 +131,15 @@ def get_pneumokity_results(result_file: os.path, all_data_file: os.path) -> dict
         Dictionary of pneumokity results
     """
     with Path(result_file).open("r") as file:
-        result_summary = pd.read_csv(file, 
-                                     dtype=str, 
-                                     converters={"top_hits": literal_eval,
-                                                 "stage2_hits": literal_eval,
-                                                 "stage2_result": literal_eval}
-                                    ).loc[0]
+        result_summary = pd.read_csv(
+            file,
+            dtype=str,
+            converters={
+                "top_hits": literal_eval,
+                "stage2_hits": literal_eval,
+                "stage2_result": literal_eval,
+            },
+        ).loc[0]
 
     with Path(all_data_file).open("r") as file:
         top_hit_data = pd.read_csv(file, dtype=str).loc[0]
@@ -148,10 +157,11 @@ def get_pneumokity_results(result_file: os.path, all_data_file: os.path) -> dict
             "top_hit_percent": top_hit_data["percent"],
             "top_hit_median_multiplicity": top_hit_data["median-multiplicity"],
         },
-        "top_5_hits": result_summary["top_hits"], 
+        "top_5_hits": result_summary["top_hits"],
     }
 
     return result_dict
+
 
 def get_analysis_status(result_dict: dict):
     """Check if pneumokity returned a serotype or failed
@@ -173,8 +183,9 @@ def get_analysis_status(result_dict: dict):
 
     return result_dict
 
+
 def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
-    """"Takes predicted serotype and checks if it is a vaccine preventable
+    """ "Takes predicted serotype and checks if it is a vaccine preventable
     serotype. Returns overall vaccine status (vaccine preventable or
     non-vaccine preventable) and dict of serotype presence in different
     vaccines.
@@ -198,18 +209,20 @@ def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
             "PCV13": "No result",
             "PCV15": "No result",
             "PCV20": "No result",
-            "PPV23": "No result"
+            "PPV23": "No result",
         }
 
     # Handle incomplete serotype outcomes
     elif serotype in vaccine_dict["predicted_serotype_incomplete"].keys():
-        result_dict["vaccine_status"] = vaccine_dict["predicted_serotype_incomplete"][serotype]["result"]
+        result_dict["vaccine_status"] = vaccine_dict["predicted_serotype_incomplete"][serotype][
+            "result"
+        ]
         result_dict["vaccine_coverage"] = {
             "PCV7": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV7"],
             "PCV13": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV13"],
             "PCV15": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV15"],
             "PCV20": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV20"],
-            "PPV23": vaccine_dict["predicted_serotype_incomplete"][serotype]["PPV23"]
+            "PPV23": vaccine_dict["predicted_serotype_incomplete"][serotype]["PPV23"],
         }
 
     # Handle other serotypes
@@ -232,9 +245,10 @@ def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
 
     return result_dict
 
+
 # TODO: Placeholder function
 def get_ipd_status(predicted_serotype: dict, ipd_dict: dict) -> dict:
-    """"Takes predicted serotype and checks if it is serotype associated
+    """Takes predicted serotype and checks if it is serotype associated
     with IPD. Returns overall vaccine status (vaccine preventable or
     non-vaccine preventable) and dict of serotype presence in different
     vaccines.
@@ -246,8 +260,9 @@ def get_ipd_status(predicted_serotype: dict, ipd_dict: dict) -> dict:
         result_dict -- Updated result_dict containing vaccine information
     """
     ipd_dict = {}
-    
+
     return ipd_dict
+
 
 def make_pipeline_dict(pipeline_str) -> dict:
     """Create dict of pipeline info from input pipeline info string.
@@ -263,14 +278,17 @@ def make_pipeline_dict(pipeline_str) -> dict:
         "name": pipeline_list[0],
         "version": pipeline_list[1],
         "homePage": pipeline_list[2],
-
     }
 
     return pipeline_dict
 
+
 def create_analysis_fields(
-    record_id: str, pneumokity_settings: dict,
-    pneumokity_results: dict, server: str, pipeline_info: dict
+    record_id: str,
+    pneumokity_settings: dict,
+    pneumokity_results: dict,
+    server: str,
+    pipeline_info: dict,
 ) -> dict:
     """Set up fields dictionary used to populate analysis table containing
     Streptococcus pneumoniae serotyping results.
@@ -296,18 +314,21 @@ def create_analysis_fields(
 
     methods_fail = onyx_analysis.add_methods(methods_dict=pneumokity_settings)
     headline_result = pneumokity_results["predicted_serotype"]
-    results_fail = onyx_analysis.add_results(top_result=headline_result, results_dict=pneumokity_results)
+    results_fail = onyx_analysis.add_results(
+        top_result=headline_result, results_dict=pneumokity_results
+    )
     onyx_analysis.add_server_records(sample_id=record_id, server_name=server)
     required_field_fail, attribute_fail = onyx_analysis.check_analysis_object(
         publish_analysis=False
     )
 
-    if any([methods_fail, results_fail, required_field_fail, attribute_fail]): # noqa SIM108
+    if any([methods_fail, results_fail, required_field_fail, attribute_fail]):  # noqa SIM108
         exitcode = 1
     else:
         exitcode = 0
 
     return onyx_analysis, exitcode
+
 
 # Main script
 def main():
@@ -337,11 +358,11 @@ def main():
 
     # Create onyx analysis dict
     onyx_analysis, exitcode = create_analysis_fields(
-        record_id = args.climbid,
-        pneumokity_settings = quality_dict,
-        pneumokity_results = result_dict,
-        server = args.server,
-        pipeline_info = pipeline_dict
+        record_id=args.climbid,
+        pneumokity_settings=quality_dict,
+        pneumokity_results=result_dict,
+        server=args.server,
+        pipeline_info=pipeline_dict,
     )
 
     # Exit if analysis object not made correctly
@@ -370,6 +391,7 @@ def main():
         )
 
     return exitcode
+
 
 if __name__ == "__main__":
     sys.exit(main())
