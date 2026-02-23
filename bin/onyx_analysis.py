@@ -230,7 +230,7 @@ def main():
     exitcode = 0
 
     # Set up log file
-    log_file = Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.log.txt"
+    log_file = Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.log.txt"
     set_up_logger(log_file)
 
     # Check if test or prod run
@@ -266,7 +266,7 @@ def main():
             return exitcode
         # Write analysis ID to file
         analysis_id_file = (
-            Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
+            Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
         )
         with Path(analysis_id_file).open("w") as file:
             file.write(f"{analysis_id}")
@@ -315,7 +315,7 @@ def main():
             return exitcode
         # Write analysis ID to file
         analysis_id_file = (
-            Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
+            Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
         )
         with Path(analysis_id_file).open("w") as file:
             file.write(f"{analysis_id}")
