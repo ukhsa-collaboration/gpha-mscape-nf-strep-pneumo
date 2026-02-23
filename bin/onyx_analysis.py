@@ -51,6 +51,21 @@ def get_args():
         help="Specify server code is being run on",
     )
 
+    # Add group for test or prod run of code
+    group = base_subparser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        "--test",
+        required=False,
+        action="store_true",
+        help="Use this option to do a test upload and check for errors before attempting an upload to onyx/s3",
+    )
+    group.add_argument(
+        "--prod",
+        required=False,
+        action="store_true",
+        help="Use this option to upload results to onyx/s3",
+    )
+
     # Add subparsers and specific args for each
     # Onyx write
     onyx_write_subparser = subparsers.add_parser(
