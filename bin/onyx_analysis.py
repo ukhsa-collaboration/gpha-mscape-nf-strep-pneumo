@@ -233,6 +233,12 @@ def main():
     log_file = Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.log.txt"
     set_up_logger(log_file)
 
+    # Check if test or prod run
+    if args.test:
+        dryrun=True
+    elif args.prod:
+        dryrun=False
+
     if args.command == "write":
         onyx_analysis = oa.OnyxAnalysis()
         # Read in analysis json
@@ -252,7 +258,7 @@ def main():
         # Write to onyx
         analysis_id, exitcode = onyx_analysis.write_analysis_to_onyx(
             server=args.server,
-            dryrun=True,  # Amend to False when ready to run
+            dryrun=dryrun,
             publish_analysis=False,
         )
         if exitcode != 0:
@@ -261,7 +267,6 @@ def main():
         analysis_id_file = (
             Path(args.output) / f"{args.climbid}.onyx_helper.{args.command}.analysis_id.txt"
         )
-
         with Path(analysis_id_file).open("w") as file:
             file.write(f"{analysis_id}")
         logging.info("Analysis ID written to file %s", analysis_id_file)
@@ -301,7 +306,7 @@ def main():
         analysis_id, exitcode = onyx_analysis.update_onyx_analysis(
             server=args.server,
             analysis_id=analysis_id,
-            dryrun=True,  # Amend to False when ready to run
+            dryrun=dryrun,
             publish_analysis=False,
         )
         if exitcode != 0:
@@ -325,7 +330,7 @@ def main():
         analysis_id, exitcode = onyx_analysis.update_onyx_analysis(
             server=args.server,
             analysis_id=analysis_id,
-            dryrun=True,  # Amend to False when ready to run
+            dryrun=dryrun,
             publish_analysis=True,
         )
         if exitcode != 0:
