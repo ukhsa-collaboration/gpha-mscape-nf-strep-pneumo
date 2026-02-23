@@ -12,6 +12,7 @@ workflow LONGREAD_TYPING {
     taxid
     ch_vaccine_serotypes
     server
+    bucket
 
     main:
     LONGREAD_KMER_SEROTYPING(
@@ -25,7 +26,8 @@ workflow LONGREAD_TYPING {
     COLLATE_SEROTYPING_RESULTS(
         LONGREAD_KMER_SEROTYPING.out.pneumokity_files,
         ch_vaccine_serotypes,
-        server
+        server,
+        bucket
     )
 
     emit:
