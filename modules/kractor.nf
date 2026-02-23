@@ -18,7 +18,7 @@ process RUN_KRACTOR {
     cpus 2
     memory '2GB'
     tag "${meta.id}"
-    publishDir "${params.outdir}/${meta.id}", mode: params.publish_dir_mode
+    publishDir "${params.outdir}/${meta.id}/kractor", mode: params.publish_dir_mode
 
     input:
     val taxid
