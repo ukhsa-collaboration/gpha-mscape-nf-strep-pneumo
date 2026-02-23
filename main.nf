@@ -41,7 +41,8 @@ workflow {
         params.extract_reads,
         params.taxid,
         ch_vaccine_serotypes,
-        params.server
+        params.server,
+        params.bucket
     )
 
 }
