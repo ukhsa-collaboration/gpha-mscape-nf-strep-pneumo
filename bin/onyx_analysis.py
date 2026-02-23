@@ -235,9 +235,9 @@ def main():
 
     # Check if test or prod run
     if args.test:
-        dryrun=True
+        dryrun = True
     elif args.prod:
-        dryrun=False
+        dryrun = False
 
     if args.command == "write":
         onyx_analysis = oa.OnyxAnalysis()
