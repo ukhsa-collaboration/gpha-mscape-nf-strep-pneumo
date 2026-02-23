@@ -1,0 +1,43 @@
+#!/usr/bin/env nextflow
+
+process CREATE_PNEUMOKITY_ONYX_JSON {
+    /*
+       This process creates a json file used to populate an onyx analysis table.
+
+        Inputs:
+            - meta: Sample metadata
+            - csv: Paths to pneumokity result csv files
+            - vaccine_serotypes: Path to yaml containing vaccine status information
+            - server: Server working on - one of mscape or synthscape
+
+        Outputs:
+            - pneumokity_summary - tuple of sample metadata and serotyping results file in onyx analysis table format
+            - logs: Path to log file for the process
+
+    */
+    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-sample-qc:0.1.0'
+    cpus 2
+    memory '2GB'
+    tag "${meta.id}"
+    publishDir "${params.outdir}/${meta.id}/onyx", mode: params.publish_dir_mode
+
+    input:
+    tuple val(meta), path(csv), path(csv), path(csv)
+    path vaccine_serotypes
+    val server
+
+    output:
+    tuple val(meta), path("${meta.id}.serotyping_analysis_table.json"), emit: pneumokity_summary
+    path "${meta.id}.serotyping_analysis_table.log.txt", emit: logs
+
+    script:
+    """
+    create_pneumokity_analysis_table.py \\
+    -i ${meta.id} \\
+    -s $server \\
+    -o . \\
+    -p "${workflow.manifest.name}, ${workflow.manifest.version}, ${workflow.manifest.homePage}" \\
+    -vt $vaccine_serotypes \\
+    --store-onyx
+    """
+    }
