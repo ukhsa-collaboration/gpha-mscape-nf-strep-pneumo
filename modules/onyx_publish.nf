@@ -25,7 +25,7 @@ process ONYX_PUBLISH {
     tuple val(meta), path(analysis_id)
 
     output:
-    tuple val(meta), path("${meta.id}.onyx_analysis.write.analysis_id.txt"), emit: analysis_id
+    tuple val(meta), path("${meta.id}.onyx_analysis.publish.analysis_id.txt"), emit: analysis_id
     path "${meta.id}.onyx_analysis.publish.log.txt", emit: logs
 
     script:
