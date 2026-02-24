@@ -79,7 +79,7 @@ def get_args():
     s3_subparser = subparsers.add_parser(
         "s3_upload", parents=[base_subparser], help="Push analysis files to s3"
     )
-    s3_subparser.add_argument("--bucket", "-b", type=Path, help="s3 bucket to push files to")
+    s3_subparser.add_argument("--bucket", "-b", type=str, help="s3 bucket to push files to")
     s3_subparser.add_argument("--analysis-id", "-a", type=str, help="File containing analysis ID")
     s3_subparser.add_argument(
         "--input-files", "-f", type=str, help="Comma separated list of files to be uploaded to s3"
