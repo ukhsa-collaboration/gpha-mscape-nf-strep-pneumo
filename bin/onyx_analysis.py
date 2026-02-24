@@ -141,6 +141,7 @@ def read_analysis_id_from_file(analysis_id_file: Path, exitcode: int) -> tuple[s
             # e.g. something like if len(lines) != 1: crash with exitcode=1
             if len(lines) == 1:
                 analysis_id = lines[0]
+                logging.info("Analysis ID read from file %s", analysis_id_file)
             else:
                 logging.error(
                     "Analysis_id_file should contain 1 line: %s contained %s lines",
