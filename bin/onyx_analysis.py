@@ -237,9 +237,16 @@ def main():
         dryrun = False
 
     if args.command == "write":
-        onyx_analysis = oa.OnyxAnalysis()
+        # Check if analysis ID file already exists
+        analysis_id_file = (
+            Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
+        )
+        if analysis_id_file.exists():
+            logging.info("Existing analysis ID file found, exiting program")
+            return exitcode
         # Read in analysis json
         try:
+            onyx_analysis = oa.OnyxAnalysis()
             onyx_analysis.read_analysis_from_json(args.input_json)
             logging.info("Analysis table successfully read from json: %s", args.input_json)
         except Exception as error:
@@ -262,11 +269,8 @@ def main():
             logging.error("Unsuccessful write to onyx, check logs for details.")
             return exitcode
         # Write analysis ID to file
-        analysis_id_file = (
-            Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
-        )
         with Path(analysis_id_file).open("w") as file:
-            file.write(f"{analysis_id}")
+            file.write(f"{analysis_id['analysis_id']}")
         logging.info("Analysis ID written to file %s", analysis_id_file)
 
         return exitcode
@@ -317,7 +321,7 @@ def main():
             Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
         )
         with Path(analysis_id_file).open("w") as file:
-            file.write(f"{analysis_id}")
+            file.write(f"{analysis_id['analysis_id']}")
 
         return exitcode
 
@@ -336,6 +340,12 @@ def main():
         )
         if exitcode != 0:
             logging.error("Unsuccessful publishing of onyx analysis, check logs for details.")
+        # Write analysis ID to file
+        analysis_id_file = (
+            Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
+        )
+        with Path(analysis_id_file).open("w") as file:
+            file.write(f"{analysis_id['analysis_id']}")
 
         return exitcode
 
