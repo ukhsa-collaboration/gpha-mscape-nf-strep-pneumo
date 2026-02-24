@@ -6,6 +6,7 @@ and add files to s3.
 
 # Imports
 import argparse
+import boto3
 import logging
 import os
 import sys
@@ -157,31 +158,27 @@ def read_analysis_id_from_file(analysis_id_file: Path, exitcode: int) -> tuple[s
 
 
 def upload_files_to_s3(
-    files_for_upload: list[Path], analysis_id: str, bucket: str
+    files_for_upload: str, analysis_id: str, bucket: str, s3_client: boto3.client
 ) -> tuple[list, int]:
     """Function for attempting to write a list of files to s3. Returns a non-zero
     exitcode if unsuccessful.
     Arguments:
-        files_for_upload -- List of files to be uploaded to s3
+        files_for_upload -- Str list of files to be uploaded to s3
         analysis_id -- Analysis ID to include in s3 file name
         bucket -- Bucket to upload files to
     Returns:
         s3_locations -- List of locations of files in s3
         exitcode -- Exitcode for function, remains as 0 if all files successfully added to s3
     """
-    # Set up s3 client
-    s3_client = s3f.set_up_s3_client()
-
+    exitcode = 0
     # Get paths for files to be uploaded
     local_file_list = files_for_upload.split(",")
-
     # List to store s3 URIs
     s3_file_list = []
-
     # Attempt upload to s3
     for file in local_file_list:
         s3_uri, exitcode = s3f.upload_file_to_s3(
-            analysis_id=analysis_id, bucket=bucket, file_for_upload=Path(file), s3_client=s3_client
+            analysis_id=analysis_id, bucket=bucket, file_for_upload=file, s3_client=s3_client
         )
         s3_file_list.append(s3_uri)
         if exitcode == 0:
@@ -279,8 +276,10 @@ def main():
         analysis_id, exitcode = read_analysis_id_from_file(args.analysis_id, exitcode)
         if exitcode != 0:
             return exitcode
+        # Set up s3 client
+        s3_client = s3f.set_up_s3_client()
         # Upload files to s3
-        s3_locations, exitcode = upload_files_to_s3(args.input_files, analysis_id, args.bucket)
+        s3_locations, exitcode = upload_files_to_s3(args.input_files, analysis_id, args.bucket, s3_client)
         if exitcode != 0:
             return exitcode
         # Write s3 locations to onyx analysis json
