@@ -6,12 +6,12 @@ and add files to s3.
 
 # Imports
 import argparse
-import boto3
 import logging
 import os
 import sys
 from pathlib import Path
 
+import boto3
 from onyx import OnyxConfig, OnyxEnv
 from onyx_analysis_helper import onyx_analysis_helper_functions as oa
 from onyx_analysis_helper import s3_functions as s3f
@@ -284,11 +284,15 @@ def main():
         # Set up s3 client
         s3_client = s3f.set_up_s3_client()
         # Upload files to s3
-        s3_locations, exitcode = upload_files_to_s3(args.input_files, analysis_id, args.bucket, s3_client)
+        s3_locations, exitcode = upload_files_to_s3(
+            args.input_files, analysis_id, args.bucket, s3_client
+        )
         if exitcode != 0:
             return exitcode
         # Write s3 locations to onyx analysis json
-        s3_json = write_s3_locations_to_json(s3_locations, analysis_id, args.bucket, args.output, args.climbid)
+        s3_json = write_s3_locations_to_json(
+            s3_locations, analysis_id, args.bucket, args.output, args.climbid
+        )
         logging.info("s3 information written to file %s", s3_json)
 
         return exitcode
