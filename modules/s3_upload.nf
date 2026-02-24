@@ -19,6 +19,7 @@ process S3_UPLOAD {
     cpus 1
     memory '1GB'
     tag "${meta.id}"
+    stageInMode 'copy'
     publishDir "${params.outdir}/${meta.id}/onyx", mode: params.publish_dir_mode
 
     input:
@@ -28,7 +29,7 @@ process S3_UPLOAD {
     tuple val(meta), path(analysis_id)
 
     output:
-    tuple val(meta), path("${analysis_id}.s3_upload.analysis_fields.json"), emit: s3_locations
+    tuple val(meta), path("${meta.id}.onyx_analysis.s3_upload.analysis_fields.json"), emit: s3_locations
     path "${meta.id}.onyx_analysis.s3_upload.log.txt", emit: logs
 
     script:
