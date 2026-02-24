@@ -191,7 +191,7 @@ def upload_files_to_s3(
 
 
 def write_s3_locations_to_json(
-    s3_locations: list, analysis_id: str, bucket: str, outdir: Path
+    s3_locations: list, analysis_id: str, bucket: str, outdir: Path, climb_id: str
 ) -> Path:
     """Function to write the s3 keys for uploaded files to an output file
     in OnyxAnalysis structure json.
@@ -213,7 +213,7 @@ def write_s3_locations_to_json(
         onyx_analysis.outputs = s3_output_location
     # TODO: Handle HTML/report
     # Write s3 locations to onyx analysis json
-    s3_file = Path(outdir) / f"{analysis_id}.s3_upload.analysis_fields.json"
+    s3_file = Path(outdir) / f"{climb_id}.onyx_analysis.s3_upload.analysis_fields.json"
 
     s3_json = onyx_analysis.write_analysis_to_json(s3_file)
 
@@ -283,7 +283,7 @@ def main():
         if exitcode != 0:
             return exitcode
         # Write s3 locations to onyx analysis json
-        s3_json = write_s3_locations_to_json(s3_locations, analysis_id, args.bucket, args.output)
+        s3_json = write_s3_locations_to_json(s3_locations, analysis_id, args.bucket, args.output, args.climbid)
         logging.info("s3 information written to file %s", s3_json)
 
         return exitcode
