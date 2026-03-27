@@ -16,14 +16,30 @@ workflow COLLATE_SEROTYPING_RESULTS {
     bucket // val: name of bucket to upload results to
 
     main:
-    if (ch_pneumokity_files) {
-        CREATE_PNEUMOKITY_ONYX_JSON(ch_pneumokity_files, ch_vaccine_serotypes, server)
+    ch_pneumokity_complete
+        .branch { meta, pneumokity_complete ->
+            pass: pneumokity_complete.text.contains("Complete")
+            fail: pneumokity_complete.text.contains("No mash data")
     }
+    .set { pneumokity_status }
 
+    ch_pneumokity_complete
+        .map { meta, pneumokity_complete -> tuple(meta, pneumokity_complete.text) }
+        .set { ch_pneumokity_complete }
+
+    CREATE_PNEUMOKITY_ONYX_JSON(ch_pneumokity_complete, ch_pneumokity_files.ifEmpty([[],[],[]]), ch_vaccine_serotypes, server)
     ONYX_WRITE(CREATE_PNEUMOKITY_ONYX_JSON.out.pneumokity_summary, server)
-    S3_UPLOAD(ch_pneumokity_files, server, bucket, ONYX_WRITE.out.analysis_id)
-    ONYX_UPDATE(server, ONYX_WRITE.out.analysis_id, S3_UPLOAD.out.s3_locations)
-    ONYX_PUBLISH(server, ONYX_UPDATE.out.analysis_id)
+    if (pneumokity_status.pass) {
+        S3_UPLOAD(ch_pneumokity_files, server, bucket, ONYX_WRITE.out.analysis_id)
+        ONYX_UPDATE(server, ONYX_WRITE.out.analysis_id, S3_UPLOAD.out.s3_locations)
+    }
+    ch_publish = channel.of()
+        .concat(ONYX_WRITE.out.analysis_id, ONYX_UPDATE.out.analysis_id.ifEmpty([[], []]))
+        .collect()
+        .map { meta_write, id_write, meta_update, id_update ->
+            tuple(meta_write, id_write)
+         }
+    ONYX_PUBLISH(server, ch_publish)
 
     emit:
     pneumokity_summary = CREATE_PNEUMOKITY_ONYX_JSON.out.pneumokity_summary // channel: [val(meta), path(pneumokity_json)]
