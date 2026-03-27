@@ -270,8 +270,10 @@ def main():
             logging.error("Unsuccessful write to onyx, check logs for details.")
             return exitcode
         # Write analysis ID to file
+        if not dryrun:
+            analysis_id = analysis_id['analysis_id']
         with Path(analysis_id_file).open("w") as file:
-            file.write(f"{analysis_id['analysis_id']}")
+            file.write(f"{analysis_id}")
         logging.info("Analysis ID written to file %s", analysis_id_file)
 
         return exitcode
