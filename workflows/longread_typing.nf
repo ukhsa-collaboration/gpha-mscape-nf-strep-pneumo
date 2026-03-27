@@ -24,6 +24,7 @@ workflow LONGREAD_TYPING {
     )
 
     COLLATE_SEROTYPING_RESULTS(
+        LONGREAD_KMER_SEROTYPING.out.pneumokity_complete,
         LONGREAD_KMER_SEROTYPING.out.pneumokity_files,
         ch_vaccine_serotypes,
         server,

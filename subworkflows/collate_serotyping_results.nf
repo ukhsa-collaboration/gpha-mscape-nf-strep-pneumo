@@ -9,6 +9,7 @@ include { ONYX_PUBLISH } from '../modules/onyx_publish'
 
 workflow COLLATE_SEROTYPING_RESULTS {
     take:
+    ch_pneumokity_complete // channel [val(meta), path(txt)]
     ch_pneumokity_files  // channel: [val(meta), path(csv), path(csv), path(csv)]
     ch_vaccine_serotypes // channel: [path(yaml)]
     server // val: name of server running pipeline on

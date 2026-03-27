@@ -27,6 +27,6 @@ workflow LONGREAD_KMER_SEROTYPING {
     }
 
     emit:
-    pneumokity_files = RUN_PNEUMOKITY.out.pneumokity_results // channel: [val(meta), path(csv), path(csv), path(csv)]
-
+    pneumokity_files = RUN_PNEUMOKITY.out.pneumokity_files // channel: [path(csv), path(csv), path(csv)]
+    pneumokity_complete = RUN_PNEUMOKITY.out.pneumokity_complete // channel [val(meta), path(txt)]
 }
