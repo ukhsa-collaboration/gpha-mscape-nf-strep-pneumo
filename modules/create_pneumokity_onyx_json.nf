@@ -22,7 +22,8 @@ process CREATE_PNEUMOKITY_ONYX_JSON {
     publishDir "${params.outdir}/${meta.id}/onyx", mode: params.publish_dir_mode
 
     input:
-    tuple val(meta), path(csv), path(csv), path(csv)
+    tuple val(meta), val(pneumokity_status)
+    tuple path(csv), path(csv), path(csv)
     path vaccine_serotypes
     val server
 
@@ -33,11 +34,12 @@ process CREATE_PNEUMOKITY_ONYX_JSON {
     script:
     """
     create_pneumokity_analysis_table.py \\
+    --store-onyx \\
     -i ${meta.id} \\
     -s $server \\
     -o . \\
     -p "${workflow.manifest.name}, ${workflow.manifest.version}, ${workflow.manifest.homePage}" \\
     -vt $vaccine_serotypes \\
-    --store-onyx
+    -r $pneumokity_status \\
     """
     }
