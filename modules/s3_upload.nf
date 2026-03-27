@@ -23,7 +23,7 @@ process S3_UPLOAD {
     publishDir "${params.outdir}/${meta.id}/onyx", mode: params.publish_dir_mode
 
     input:
-    tuple val(meta), path(alldata_csv), path(quality_csv), path(result_csv)
+    tuple path(alldata_csv), path(quality_csv), path(result_csv)
     val server
     val bucket
     tuple val(meta), path(analysis_id)
