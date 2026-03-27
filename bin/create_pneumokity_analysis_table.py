@@ -59,6 +59,13 @@ def get_args():
         required=True,
         help="Comma separated str in format: 'pipeline name, version, homepage'",
     )
+    parser.add_argument(
+        "--pneumokity_result",
+        "-r",
+        type=str,
+        required=True,
+        help="Argument stating whether pneumokity ran successfully"
+    )
     # Add group options to specify onyx behaviour
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
@@ -339,20 +346,22 @@ def main():
     # Set up log file
     log_file = Path(args.output) / f"{args.climbid}.serotyping.analysis_fields.log.txt"
     set_up_logger(log_file)
+    if args.pneumokity_result == "True":
+        # Paths to pneumokity files
+        quality_file = Path(args.output) / f"{args.climbid}_quality_system_data.csv"
+        result_file = Path(args.output) / f"{args.climbid}_result_data.csv"
+        data_file = Path(args.output) / f"{args.climbid}_alldata.csv"
 
-    # Paths to pneumokity files
-    quality_file = Path(args.output) / f"{args.climbid}_quality_system_data.csv"
-    result_file = Path(args.output) / f"{args.climbid}_result_data.csv"
-    data_file = Path(args.output) / f"{args.climbid}_alldata.csv"
+        # Get information from pneumokity result files
+        quality_dict = get_pneumokity_quality_info(quality_file)
+        result_dict = get_pneumokity_results(result_file, data_file)
 
-    # Get information from pneumokity result files
-    quality_dict = get_pneumokity_quality_info(quality_file)
-    result_dict = get_pneumokity_results(result_file, data_file)
-
-    # Check if analysis failed or result was obtained
-    result_dict = get_analysis_status(result_dict)
-    result_dict = get_vaccine_status(result_dict, args.vaccine_serotypes)
-
+        # Check if analysis failed or result was obtained
+        result_dict = get_analysis_status(result_dict)
+        result_dict = get_vaccine_status(result_dict, args.vaccine_serotypes)
+    else:
+        quality_dict = {"quality_info": "No Mash data - empty file"}
+        result_dict = {"predicted_serotype": "No Mash data - empty file"}
     # Convert pipeline info to dict
     pipeline_dict = make_pipeline_dict(args.pipeline_info)
 
