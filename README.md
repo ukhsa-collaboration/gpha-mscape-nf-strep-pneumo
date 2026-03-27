@@ -1,57 +1,77 @@
 # mscape-template
 
-This repository is a template for creating new repositories containing  
-code that will run on mSCAPE. It serves as a guide for code layout  
-and files will need amending to fit the repo purpose.  
-
-As a minimum, mSCAPE repositories should include the following:
-- Code to be in src/ layout 
-- tests/ folder at same level as src/ 
-- .github/ folder containing workflows and a pull request template
-- .gitignore file
-- pyproject.toml file
-- .pre-commit-hooks.yaml
-
-This repo follows the above structure and contains examples of the files  
-referenced above.
-
-A ssuggested layout for repo READMEs is included below. The guidance  
-documentation contains further information on required repository  
-structure, development cycles, and making pull requests. Please read  
-this guidance document before using the template.
-
-# mscape-template
-
-Brief description of project here
+This repository contains a nextflow pipeline and associated scripts for
+the characterisation of Streptococcus pneumoniae in metagenomic samples.
 
 ## Installation
 
-Add installation instructions here. Ideally include commands to make  
-the process as easy as possible for users.  
+To clone this repo:  
+`git clone git@github.com:ukhsa-collaboration/gpha-mscape-nf-strep-pneumo.git`
 
-Clone repo and create environment:  
-`git clone git@github.com:ukhsa-collaboration/mscape-template.git`  
-
-`conda env create -n mscape_template `  
-
-`conda activate mscape_template`  
-
-Installation for users:  
-`cd mscape-template`  
-`pip install .`
-
-Installation for developers (installs code in editable mode):  
-`cd mscape-template`  
-`pip install --editable '.[dev]'`
+No further installation is required for use on Bryn as the nextflow pipeline
+is containerised and will pull in relevant containers as required when the
+pipeline is run.
 
 ## Usage
 
-Include command line arguments (e.g. the output displayed when using -h)  
-for reference. Example commands can also be helpful.
+Example command:
+```bash
+nextflow run main.nf \
+--samplesheet /path/to/samplesheet.csv \
+--taxid 1313 \
+--extract_reads True \
+--outdir /path/to/outdir \
+--server server-name \
+--bucket "name-of-s3-bucket"
+```
 
-## Other sections
+## Parameters
 
-Add other sections as appropriate for your repo. This may include  
-instructions on updating the repo, instructions on adding new  
-references, troubleshooting etc. 
+| Parameter     |   Description |
+|---------------|---------------|
+| samplesheet   | Path to csv file containing sample information. Requires following columns: climb_id, fastq_1, fastq_2, kraken_output, kraken_report. |
+| taxid         | NCBI taxon ID to extract reads for |
+| extract_reads | Boolean specifying if taxon reads should be extracted from fastq before running pneumokity |
+| outdir        | Path to output directory |
+| server        | Name of server working on |
+| bucket        | Name of s3 bucket to upload result files to |
 
+## Pipeline overview
+
+The pipeline consists of the following steps:
+1. (Optional) Extracts reads for taxon of interest from a sample e.g. all
+   reads classified as Streptoccocus or below (taxid: 1301), or all reads
+   classified as Streptococcus pneumoniae (taxid: 1313).
+2. Run pneumokity on reads (extracted by taxon or all reads in the sample).
+   Pneumokity is a kmer-based serotyping tool from Streptoccocus pneumoniae.
+3. Collate pneumokity results into the format required for onyx. This includes
+   adding the vaccine status of the identified serotype if pneumokity ran
+   successfully.
+4. Creation of an onyx analysis table and adding any results files produced
+   by pneumokity to s3 storage.
+5. Publishing of the onyx analysis table.
+
+### Current pipeline structure
+Long read typing workflow:
+```
+longread_typing
+|-- longread_kmer_serotyping
+    |-- run_kractor (optional)
+    |-- run_pneumokity
+
+|-- collate_serotyping_results
+    |-- create_pneumokity_onyx_json
+    |-- onyx_write
+    |-- s3_upload (pneumokity success only)
+    |-- onyx_update (pneumokity success only)
+    |-- onyx_publish
+```
+### Future additions
+
+The following elements may be added in future versions of the pipeline:
+- Streptococcus pneumoniae speciation - integration of the code used to confirm
+  if samples containing Streptococcus reads contain Streptococcus pneumoniae as
+  a workflow to run before longread_typing.
+- PneumoCAT2 typing - addition of an extra mapping-based typing method in
+  longread_typing for extra verification and added resolution for difficult to
+  resolve serotypes.
