@@ -18,8 +18,8 @@ workflow COLLATE_SEROTYPING_RESULTS {
     main:
     ch_pneumokity_complete
         .branch { meta, pneumokity_complete ->
-            pass: pneumokity_complete.text.contains("Complete")
-            fail: pneumokity_complete.text.contains("No mash data")
+            pass: pneumokity_complete.text.contains("True")
+            fail: pneumokity_complete.text.contains("False")
     }
     .set { pneumokity_status }
 
