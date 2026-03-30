@@ -1,4 +1,4 @@
-# mscape-template
+# gpha-mscape-nf-strep-pneumo
 
 This repository contains a nextflow pipeline and associated scripts for
 the characterisation of Streptococcus pneumoniae in metagenomic samples.
