@@ -35,6 +35,6 @@ process ONYX_PUBLISH {
     -s $server \\
     -o . \\
     -a $analysis_id \\
-    --test
+    --prod
     """
     }
