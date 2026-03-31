@@ -35,6 +35,6 @@ process ONYX_WRITE {
     -s $server \\
     -o . \\
     -j $result_json \\
-    --test
+    --prod
     """
     }
