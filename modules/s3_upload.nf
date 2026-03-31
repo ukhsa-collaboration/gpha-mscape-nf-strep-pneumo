@@ -41,6 +41,6 @@ process S3_UPLOAD {
     -o . \\
     -a $analysis_id \\
     -f "${alldata_csv},${quality_csv},${result_csv}" \\
-    --test
+    --prod
     """
     }
