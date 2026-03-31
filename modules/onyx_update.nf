@@ -38,6 +38,6 @@ process ONYX_UPDATE {
     -o . \\
     -a $analysis_id \\
     -j $update_json \\
-    --test
+    --prod
     """
     }
