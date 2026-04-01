@@ -318,7 +318,7 @@ def create_analysis_fields(
     onyx_analysis.pipeline_name = pipeline_info["name"]
     onyx_analysis.pipeline_version = pipeline_info["version"]
     onyx_analysis.pipeline_url = pipeline_info["homePage"]
-    onyx_analysis.outputs = ""
+    onyx_analysis.outputs = "No s3 outputs"
 
     methods_fail = onyx_analysis.add_methods(methods_dict=pneumokity_settings)
     headline_result = pneumokity_results["predicted_serotype"]
