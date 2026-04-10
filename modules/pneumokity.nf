@@ -11,7 +11,7 @@ process RUN_PNEUMOKITY {
         Outputs:
             - results_folder: Folder containing pneumokity results
     */
-    container 'docker.io/nanozoo/pneumokity:1.0--ec3a71f'
+    container 'ghcr.io/ukhsa-collaboration/pneumokity:1.0.1'
     cpus 2
     memory '2GB'
     tag "${meta.id}"
