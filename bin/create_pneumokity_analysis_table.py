@@ -212,7 +212,6 @@ def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
     if result_dict["analysis_status"] == "Fail":
         result_dict["vaccine_status"] = "No result"
         result_dict["vaccine_coverage"] = {
-            "PCV7": "No result",
             "PCV13": "No result",
             "PCV15": "No result",
             "PCV20": "No result",
@@ -225,7 +224,6 @@ def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
             "result"
         ]
         result_dict["vaccine_coverage"] = {
-            "PCV7": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV7"],
             "PCV13": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV13"],
             "PCV15": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV15"],
             "PCV20": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV20"],
