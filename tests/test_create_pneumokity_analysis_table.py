@@ -76,13 +76,7 @@ def expected_result_dict():
             "top_hit_shared_hashes": "961/1000",
             "top_hit_median_multiplicity": "50",
         },
-        "top_5_hits": {
-            '01': 96.1,
-            '02': 80.3,
-            '19A-II': 79.3,
-            '12A': 30.2,
-            '11A/11D': 27.6
-        },
+        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
     }
 
     return result_dict
@@ -102,13 +96,7 @@ def expected_result_dict_with_analysis_status():
             "top_hit_shared_hashes": "961/1000",
             "top_hit_median_multiplicity": "50",
         },
-        "top_5_hits": {
-            '01': 96.1,
-            '02': 80.3,
-            '19A-II': 79.3,
-            '12A': 30.2,
-            '11A/11D': 27.6
-        },
+        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
     }
 
     return result_dict
@@ -136,13 +124,7 @@ def expected_result_dict_with_vaccine_status():
             "PCV20": "Included",
             "PPV23": "Included"
         },
-        "top_5_hits": {
-            '01': 96.1,
-            '02': 80.3,
-            '19A-II': 79.3,
-            '12A': 30.2,
-            '11A/11D': 27.6
-        },
+        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
     }
 
     return result_dict
@@ -174,7 +156,7 @@ def expected_result_dict_incomplete_serotype():
         "analysis_status": "Pass",
         "rag_status": "RED",
         "stage1_result": "",
-        "stage2_result": {},
+        "stage2_result": '{}',
         "top_hit_info": {
             "serotype": "12F_12A_12B_44_46",
             "top_hit_identity": "0.975366",
@@ -182,13 +164,7 @@ def expected_result_dict_incomplete_serotype():
             "top_hit_shared_hashes": "975/1000",
             "top_hit_median_multiplicity": "10",
         },
-        "top_5_hits": {
-            '12F_12A_12B_44_46': 97.5,
-            '02': 12.0,
-            '19A-II': 8.6,
-            '12A': 5.3,
-            '11A/11D': 0.3
-        },
+        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
     }
 
     return result_dict
@@ -200,7 +176,7 @@ def expected_result_dict_incomplete_serotype_vaccine_status():
         "analysis_status": "Pass",
         "rag_status": "RED",
         "stage1_result": "",
-        "stage2_result": {},
+        "stage2_result": '{}',
         "top_hit_info": {
             "serotype": "12F_12A_12B_44_46",
             "top_hit_identity": "0.975366",
@@ -216,13 +192,7 @@ def expected_result_dict_incomplete_serotype_vaccine_status():
             "PCV20": "Inconclusive",
             "PPV23": "Inconclusive"
         },
-        "top_5_hits": {
-            '12F_12A_12B_44_46': 97.5,
-            '02': 12.0,
-            '19A-II': 8.6,
-            '12A': 5.3,
-            '11A/11D': 0.3
-        },
+        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
     }
 
     return result_dict
@@ -242,13 +212,7 @@ def expected_result_dict_fail():
             "top_hit_shared_hashes": "234/1000",
             "top_hit_median_multiplicity": "10",
         },
-        "top_5_hits": {
-            '01': 23.4,
-            '02': 12.0,
-            '19A-II': 8.6,
-            '12A': 5.3,
-            '11A/11D': 0.3
-        },
+        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
     }
 
     return result_dict
@@ -268,13 +232,7 @@ def expected_result_dict_with_analysis_status_fail():
             "top_hit_shared_hashes": "234/1000",
             "top_hit_median_multiplicity": "10",
         },
-        "top_5_hits": {
-            '01': 23.4,
-            '02': 12.0,
-            '19A-II': 8.6,
-            '12A': 5.3,
-            '11A/11D': 0.3
-        },
+        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
     }
 
     return result_dict
@@ -302,13 +260,7 @@ def expected_result_dict_with_vaccine_status_fail():
             "PCV20": "No result",
             "PPV23": "No result"
         },
-        "top_5_hits": {
-            '01': 23.4,
-            '02': 12.0,
-            '19A-II': 8.6,
-            '12A': 5.3,
-            '11A/11D': 0.3
-        },
+        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
     }
 
     return result_dict
