@@ -183,10 +183,10 @@ def get_analysis_status(result_dict: dict):
         "Median multiplicity low",
     ]
 
-    if result_dict["predicted_serotype"] in fails:
-        result_dict["analysis_status"] = "Fail"
-    else:
-        result_dict["analysis_status"] = "Pass"
+    result_dict["analysis_status"] = next(
+        ("Fail" for fail in fails if fail in result_dict["predicted_serotype"]),
+         "Pass"
+    )
 
     return result_dict
 
