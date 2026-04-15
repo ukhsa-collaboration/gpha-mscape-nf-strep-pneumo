@@ -143,6 +143,7 @@ def expected_fields_dict(expected_quality_dict, expected_result_dict_with_vaccin
         "result_metrics": json.dumps(expected_result_dict_with_vaccine_status),
         "synthscape_records": ["C-123456789"],
         "identifiers": [],
+        "outputs": ""
     }
 
     return fields_dict
