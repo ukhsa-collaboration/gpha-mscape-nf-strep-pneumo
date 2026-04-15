@@ -118,7 +118,6 @@ def expected_result_dict_with_vaccine_status():
         },
         "vaccine_status": "Vaccine serotype",
         "vaccine_coverage": {
-            "PCV7": "Not included",
             "PCV13": "Included",
             "PCV15": "Included",
             "PCV20": "Included",
@@ -186,7 +185,6 @@ def expected_result_dict_incomplete_serotype_vaccine_status():
         },
         "vaccine_status": "Cannot split vaccine type from non-vaccine type serotypes",
         "vaccine_coverage": {
-            "PCV7": "Not included",
             "PCV13": "Not included",
             "PCV15": "Not included",
             "PCV20": "Inconclusive",
@@ -254,7 +252,6 @@ def expected_result_dict_with_vaccine_status_fail():
         },
         "vaccine_status": "No result",
         "vaccine_coverage": {
-            "PCV7": "No result",
             "PCV13": "No result",
             "PCV15": "No result",
             "PCV20": "No result",
