@@ -58,17 +58,17 @@ def expected_quality_dict():
 
 @pytest.fixture
 def expected_headline_result():
-    result = "Predicted serotype: 01; rag_status: GREEN"
+    result = "Predicted serotype: 1; rag_status: GREEN"
 
     return result
 
 @pytest.fixture
 def expected_result_dict():
     result_dict = {
-        "predicted_serotype": "01",
+        "predicted_serotype": "1",
         "rag_status": "GREEN",
-        "stage1_result": "01",
-        "stage2_result": {},
+        "stage1_result": "1",
+        "stage2_result": '{}',
         "top_hit_info": {
             "serotype": "01",
             "top_hit_identity": "0.981234567",
@@ -90,11 +90,11 @@ def expected_result_dict():
 @pytest.fixture
 def expected_result_dict_with_analysis_status():
     result_dict = {
-        "predicted_serotype": "01",
+        "predicted_serotype": "1",
         "rag_status": "GREEN",
         "analysis_status": "Pass",
-        "stage1_result": "01",
-        "stage2_result": {},
+        "stage1_result": "1",
+        "stage2_result": '{}',
         "top_hit_info": {
             "serotype": "01",
             "top_hit_identity": "0.981234567",
@@ -116,11 +116,11 @@ def expected_result_dict_with_analysis_status():
 @pytest.fixture
 def expected_result_dict_with_vaccine_status():
     result_dict = {
-        "predicted_serotype": "01",
+        "predicted_serotype": "1",
         "rag_status": "GREEN",
         "analysis_status": "Pass",
-        "stage1_result": "01",
-        "stage2_result": {},
+        "stage1_result": "1",
+        "stage2_result": '{}',
         "top_hit_info": {
             "serotype": "01",
             "top_hit_identity": "0.981234567",
@@ -158,7 +158,7 @@ def expected_fields_dict(expected_quality_dict, expected_result_dict_with_vaccin
         "pipeline_url": "https://github.com/ukhsa-collaboration/gpha-mscape-nf-strep-pneumo",
         "pipeline_version": "v0.1.0",
         "methods": json.dumps(expected_quality_dict),
-        "result": "01",
+        "result": "1",
         "result_metrics": json.dumps(expected_result_dict_with_vaccine_status),
         "synthscape_records": ["C-123456789"],
         "identifiers": [],
