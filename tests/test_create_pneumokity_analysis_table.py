@@ -200,10 +200,10 @@ def expected_result_dict_incomplete_serotype_vaccine_status():
 @pytest.fixture
 def expected_result_dict_fail():
     result_dict = {
-        "predicted_serotype": "Below 20% hit",
+        "predicted_serotype": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
         "rag_status": "RED",
-        "stage1_result": "",
-        "stage2_result": {},
+        "stage1_result": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
+        "stage2_result": '{}',
         "top_hit_info": {
             "serotype": "12",
             "top_hit_identity": "0.234366",
@@ -219,11 +219,11 @@ def expected_result_dict_fail():
 @pytest.fixture
 def expected_result_dict_with_analysis_status_fail():
     result_dict = {
-        "predicted_serotype": "Below 20% hit",
+        "predicted_serotype": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
         "analysis_status": "Fail",
         "rag_status": "RED",
-        "stage1_result": "",
-        "stage2_result": {},
+        "stage1_result": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
+        "stage2_result": '{}',
         "top_hit_info": {
             "serotype": "12",
             "top_hit_identity": "0.234366",
@@ -239,11 +239,11 @@ def expected_result_dict_with_analysis_status_fail():
 @pytest.fixture
 def expected_result_dict_with_vaccine_status_fail():
     result_dict = {
-        "predicted_serotype": "Below 20% hit",
+        "predicted_serotype": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
         "analysis_status": "Fail",
         "rag_status": "RED",
-        "stage1_result": "",
-        "stage2_result": {},
+        "stage1_result": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
+        "stage2_result": '{}',
         "top_hit_info": {
             "serotype": "12",
             "top_hit_identity": "0.234366",
