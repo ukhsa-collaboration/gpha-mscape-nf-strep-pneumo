@@ -27,7 +27,7 @@ process RUN_PNEUMOKITY {
     script:
     """
     set +e
-    pneumokity.py mix -f $filtered_fastq $filtered_fastq -o . &> pneumokity_stdout.txt
+    pneumokity mix -f $filtered_fastq $filtered_fastq -o . &> pneumokity_stdout.txt
     exit_status=\$?
     if [ \$exit_status == 0 ] ; then
         result="True"
