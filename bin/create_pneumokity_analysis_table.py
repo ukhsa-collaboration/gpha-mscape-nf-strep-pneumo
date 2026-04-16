@@ -116,7 +116,7 @@ def get_pneumokity_quality_info(quality_file: os.path) -> dict:
         quality_dict -- Dictionary of quality system information
     """
     with Path(quality_file).open("r") as file:
-        quality_info = pd.read_csv(quality_file, converters={"fastq_files": literal_eval}).loc[0]
+        quality_info = pd.read_csv(file, converters={"fastq_files": literal_eval}).loc[0]
 
     # Pull out relevant fields to make dict
     quality_dict = {
