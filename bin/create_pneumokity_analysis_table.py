@@ -157,6 +157,7 @@ def get_pneumokity_results(result_file: os.path, all_data_file: os.path) -> dict
         "rag_status": result_summary["rag_status"],
         "stage1_result": result_summary["stage1_result"],
         "stage2_result": result_summary["stage2_result"],
+        "stage2_hits": result_summary["stage2_hits"],
         "top_hit_info": {
             "serotype": top_hit_data["Serotype"],
             "top_hit_identity": top_hit_data["identity"],
