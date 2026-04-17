@@ -69,6 +69,7 @@ def expected_result_dict():
         "rag_status": "GREEN",
         "stage1_result": "1",
         "stage2_result": '{}',
+        "stage2_hits": '{}',
         "top_hit_info": {
             "serotype": "01",
             "top_hit_identity": "0.981234567",
@@ -89,6 +90,7 @@ def expected_result_dict_with_analysis_status():
         "analysis_status": "Pass",
         "stage1_result": "1",
         "stage2_result": '{}',
+        "stage2_hits": '{}',
         "top_hit_info": {
             "serotype": "01",
             "top_hit_identity": "0.981234567",
@@ -109,6 +111,7 @@ def expected_result_dict_with_vaccine_status():
         "analysis_status": "Pass",
         "stage1_result": "1",
         "stage2_result": '{}',
+        "stage2_hits": '{}',
         "top_hit_info": {
             "serotype": "01",
             "top_hit_identity": "0.981234567",
@@ -157,6 +160,7 @@ def expected_result_dict_incomplete_serotype():
         "rag_status": "RED",
         "stage1_result": "",
         "stage2_result": '{}',
+        "stage2_hits": '{}',
         "top_hit_info": {
             "serotype": "12F_12A_12B_44_46",
             "top_hit_identity": "0.975366",
@@ -177,6 +181,7 @@ def expected_result_dict_incomplete_serotype_vaccine_status():
         "rag_status": "RED",
         "stage1_result": "",
         "stage2_result": '{}',
+        "stage2_hits": '{}',
         "top_hit_info": {
             "serotype": "12F_12A_12B_44_46",
             "top_hit_identity": "0.975366",
@@ -204,6 +209,7 @@ def expected_result_dict_fail():
         "rag_status": "RED",
         "stage1_result": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
         "stage2_result": '{}',
+        "stage2_hits": '{}',
         "top_hit_info": {
             "serotype": "12",
             "top_hit_identity": "0.234366",
@@ -224,6 +230,7 @@ def expected_result_dict_with_analysis_status_fail():
         "rag_status": "RED",
         "stage1_result": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
         "stage2_result": '{}',
+        "stage2_hits": '{}',
         "top_hit_info": {
             "serotype": "12",
             "top_hit_identity": "0.234366",
@@ -244,6 +251,7 @@ def expected_result_dict_with_vaccine_status_fail():
         "rag_status": "RED",
         "stage1_result": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
         "stage2_result": '{}',
+        "stage2_hits": '{}',
         "top_hit_info": {
             "serotype": "12",
             "top_hit_identity": "0.234366",
