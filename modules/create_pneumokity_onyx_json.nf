@@ -22,8 +22,7 @@ process CREATE_PNEUMOKITY_ONYX_JSON {
     publishDir "${params.outdir}/${meta.id}/onyx", mode: params.publish_dir_mode
 
     input:
-    tuple val(meta), val(pneumokity_status)
-    tuple path(csv), path(csv), path(csv)
+    tuple val(meta), val(pneumokity_status), path(csv), path(csv), path(csv)
     path vaccine_serotypes
     val server
 
