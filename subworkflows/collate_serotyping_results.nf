@@ -27,9 +27,16 @@ workflow COLLATE_SEROTYPING_RESULTS {
 
     CREATE_PNEUMOKITY_ONYX_JSON(ch_pneumokity_complete, ch_vaccine_serotypes, server)
     ONYX_WRITE(CREATE_PNEUMOKITY_ONYX_JSON.out.pneumokity_summary, server)
+    ch_s3_inputs = ch_pneumokity_complete
+            .join(ONYX_WRITE.out.analysis_id)
+            .map { meta, pneumokity_complete, data_csv, qual_csv, result_csv, analysis_id
+                -> tuple(meta, data_csv, qual_csv, result_csv, analysis_id)
+            }
     if (pneumokity_status.pass) {
-        S3_UPLOAD(ch_pneumokity_files, server, bucket, ONYX_WRITE.out.analysis_id)
-        ONYX_UPDATE(server, ONYX_WRITE.out.analysis_id, S3_UPLOAD.out.s3_locations)
+        S3_UPLOAD(ch_s3_inputs, server, bucket)
+        ch_update_inputs = ONYX_WRITE.out.analysis_id
+            .join(S3_UPLOAD.out.s3_locations)
+        ONYX_UPDATE(ch_update_inputs, server)
     }
     ch_publish = channel.of()
         .concat(ONYX_WRITE.out.analysis_id, ONYX_UPDATE.out.analysis_id.ifEmpty([[], []]))

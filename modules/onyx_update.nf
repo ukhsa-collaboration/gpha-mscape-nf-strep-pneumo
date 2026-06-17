@@ -22,9 +22,8 @@ process ONYX_UPDATE {
     publishDir "${params.outdir}/${meta.id}/onyx", mode: params.publish_dir_mode
 
     input:
+    tuple val(meta), path(analysis_id), path(update_json)
     val server
-    tuple val(meta), path(analysis_id)
-    tuple val(meta), path(update_json)
 
     output:
     tuple val(meta), path("${meta.id}.onyx_analysis.update.analysis_id.txt"), emit: analysis_id
