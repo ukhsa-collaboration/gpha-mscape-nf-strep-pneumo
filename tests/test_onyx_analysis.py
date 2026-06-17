@@ -58,25 +58,25 @@ def test_bucket(s3_client):
 
 @pytest.fixture
 def analysis_id_file():
-    file = "tests/test_data/C-123456789.onyx_analysis.write.analysis_id.txt"
+    file = "tests/test_data/C-TEST.onyx_analysis.write.analysis_id.txt"
     return file
 
 
 @pytest.fixture
 def quality_file():
-    file = "tests/test_data/C-123456789_quality_system_data.csv"
+    file = "tests/test_data/C-TEST_quality_system_data.csv"
     return file
 
 
 @pytest.fixture
 def result_file():
-    file = "tests/test_data/C-123456789_result_data.csv"
+    file = "tests/test_data/C-TEST_result_data.csv"
     return file
 
 
 @pytest.fixture
 def data_file():
-    file = "tests/test_data/C-123456789_alldata.csv"
+    file = "tests/test_data/C-TEST_alldata.csv"
     return file
 
 
@@ -85,9 +85,9 @@ def data_file():
 @pytest.fixture
 def s3_file_list():
     files = [
-        "s3://testbucket/A-1234/A-1234_C-123456789_quality_system_data.csv",
-        "s3://testbucket/A-1234/A-1234_C-123456789_result_data.csv",
-        "s3://testbucket/A-1234/A-1234_C-123456789_alldata.csv",
+        "s3://testbucket/A-TEST/A-TEST_C-TEST_quality_system_data.csv",
+        "s3://testbucket/A-TEST/A-TEST_C-TEST_result_data.csv",
+        "s3://testbucket/A-TEST/A-TEST_C-TEST_alldata.csv",
     ]
     return files
 
@@ -95,7 +95,7 @@ def s3_file_list():
 @pytest.fixture
 def s3_file(s3_client, test_bucket, example_result_file):
     s3_client.upload_file(
-        example_result_file, "testbucket", "A-1234/A-1234_C-123456789_quality_system_data.csv"
+        example_result_file, "testbucket", "A-TEST/A-TEST_C-TEST_quality_system_data.csv"
     )
 
 
@@ -107,7 +107,7 @@ def output_file_path(tmp_path_factory):
 
 @pytest.fixture
 def expected_s3_json():
-    s3_json = {"identifiers": [], "outputs": "s3://testbucket/A-1234"}
+    s3_json = {"identifiers": [], "outputs": "s3://testbucket/A-TEST"}
     return s3_json
 
 
@@ -116,7 +116,7 @@ def test_read_analysis_id_from_file(analysis_id_file):
     tuple_return = oa.read_analysis_id_from_file(analysis_id_file, 0)
 
     print(tuple_return)
-    assert tuple_return == ("A-1234", 0)
+    assert tuple_return == ("A-TEST", 0)
 
 @mock_aws
 def test_upload_file_to_s3(
@@ -128,7 +128,7 @@ def test_upload_file_to_s3(
     print(files_for_upload)
     tuple_return = oa.upload_files_to_s3(
         files_for_upload=files_for_upload,
-        analysis_id="A-1234",
+        analysis_id="A-TEST",
         bucket="testbucket",
         s3_client=s3_client,
     )
@@ -139,7 +139,7 @@ def test_upload_file_to_s3(
 
 def test_write_s3_locations_to_json(s3_file_list, output_file_path, expected_s3_json):
     s3_json_file = oa.write_s3_locations_to_json(
-        s3_file_list, "A-1234", "testbucket", output_file_path, "C-123456789"
+        s3_file_list, "A-TEST", "testbucket", output_file_path, "C-TEST"
     )
 
     with Path.open(s3_json_file) as file:

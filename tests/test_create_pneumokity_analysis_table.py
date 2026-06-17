@@ -16,17 +16,17 @@ import create_pneumokity_analysis_table as pat  # noqa: F401
 # Fixtures
 @pytest.fixture
 def quality_file():
-    file = "tests/test_data/C-123456789_quality_system_data.csv"
+    file = "tests/test_data/C-TEST_quality_system_data.csv"
     return file
 
 @pytest.fixture
 def result_file():
-    file = "tests/test_data/C-123456789_result_data.csv"
+    file = "tests/test_data/C-TEST_result_data.csv"
     return file
 
 @pytest.fixture
 def data_file():
-    file = "tests/test_data/C-123456789_alldata.csv"
+    file = "tests/test_data/C-TEST_alldata.csv"
     return file
 
 @pytest.fixture
@@ -48,8 +48,8 @@ def expected_pipeline_info():
 def expected_quality_dict():
     quality_dict = {
         "workflow": "PneumoKITy V1.0",
-        "fastq_files_analysed": ['C-123456789.taxon_extracted.human_filtered.fastq.gz', 
-                                 'C-123456789.taxon_extracted.human_filtered.fastq.gz'],
+        "fastq_files_analysed": ['C-TEST.taxon_extracted.human_filtered.fastq.gz',
+                                 'C-TEST.taxon_extracted.human_filtered.fastq.gz'],
         "kmer_min_percent": "90",
         "database": "/PneumoKITy/ctvdb",
     }
@@ -135,17 +135,17 @@ def expected_result_dict_with_vaccine_status():
 @pytest.fixture
 def expected_fields_dict(expected_quality_dict, expected_result_dict_with_vaccine_status):
     fields_dict = {
+        "identifiers": [],
         "name": "ukhsa-streptococcus-pneumoniae-serotyping",
         "description": "This is an analysis to serotype strep pneumo in metagenomic samples",
         "analysis_date": datetime.datetime.now().date().isoformat(),
         "pipeline_name": "gpha-mscape-nf-strep-pneumo",
         "pipeline_url": "https://github.com/ukhsa-collaboration/gpha-mscape-nf-strep-pneumo",
         "pipeline_version": "v0.1.0",
-        "methods": json.dumps(expected_quality_dict),
+        "methods": expected_quality_dict,
         "result": "1",
-        "result_metrics": json.dumps(expected_result_dict_with_vaccine_status),
-        "synthscape_records": ["C-123456789"],
-        "identifiers": [],
+        "result_metrics": expected_result_dict_with_vaccine_status,
+        "synthscape_records": ["C-TEST"],
         "outputs": "No s3 outputs"
     }
 
@@ -328,7 +328,7 @@ def test_get_vaccine_status(result_dict, vaccine_info_file, expected_output, req
 
 def test_create_analysis_fields(expected_quality_dict, expected_result_dict_with_vaccine_status, expected_fields_dict, expected_pipeline_info):
 
-    analysis_fields, exitcode = pat.create_analysis_fields("C-123456789", expected_quality_dict, expected_result_dict_with_vaccine_status, "synthscape", expected_pipeline_info)
+    analysis_fields, exitcode = pat.create_analysis_fields("C-TEST", expected_quality_dict, expected_result_dict_with_vaccine_status, "synthscape", expected_pipeline_info)
 
     print(analysis_fields.__dict__)
 
