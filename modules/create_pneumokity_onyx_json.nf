@@ -15,7 +15,7 @@ process CREATE_PNEUMOKITY_ONYX_JSON {
             - logs: Path to log file for the process
 
     */
-    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-sample-qc:0.1.0'
+    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.1'
     cpus 2
     memory '2GB'
     tag "${meta.id}"

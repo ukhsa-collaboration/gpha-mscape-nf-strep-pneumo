@@ -15,7 +15,7 @@ process S3_UPLOAD {
             - s3_locations: Tuple of sample metadata and path to s3 locations file
             - logs: Path to log file for process
     */
-    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.3.1'
+    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.1'
     cpus 1
     memory '1GB'
     tag "${meta.id}"
