@@ -4,14 +4,16 @@
 Unit tests for functions in the create_pneumokity_analysis_table.py
 script in bin/.
 """
+
 import datetime
-import json
 import sys
+
 import pytest  # noqa: F401
 
-sys.path.append('bin/')
+sys.path.append("bin/")
 
 import create_pneumokity_analysis_table as pat  # noqa: F401
+
 
 # Fixtures
 @pytest.fixture
@@ -19,42 +21,50 @@ def quality_file():
     file = "tests/test_data/C-TEST_quality_system_data.csv"
     return file
 
+
 @pytest.fixture
 def result_file():
     file = "tests/test_data/C-TEST_result_data.csv"
     return file
+
 
 @pytest.fixture
 def data_file():
     file = "tests/test_data/C-TEST_alldata.csv"
     return file
 
+
 @pytest.fixture
 def vaccine_file():
     file = "assets/predicted_serotype_vaccine_status.yaml"
     return file
+
 
 @pytest.fixture
 def expected_pipeline_info():
     pipeline_dict = {
         "name": "gpha-mscape-nf-strep-pneumo",
         "version": "v0.1.0",
-        "homePage": "https://github.com/ukhsa-collaboration/gpha-mscape-nf-strep-pneumo"
+        "homePage": "https://github.com/ukhsa-collaboration/gpha-mscape-nf-strep-pneumo",
     }
 
     return pipeline_dict
+
 
 @pytest.fixture
 def expected_quality_dict():
     quality_dict = {
         "workflow": "PneumoKITy V1.0",
-        "fastq_files_analysed": ['C-TEST.taxon_extracted.human_filtered.fastq.gz',
-                                 'C-TEST.taxon_extracted.human_filtered.fastq.gz'],
+        "fastq_files_analysed": [
+            "C-TEST.taxon_extracted.human_filtered.fastq.gz",
+            "C-TEST.taxon_extracted.human_filtered.fastq.gz",
+        ],
         "kmer_min_percent": "90",
         "database": "/PneumoKITy/ctvdb",
     }
 
     return quality_dict
+
 
 @pytest.fixture
 def expected_headline_result():
@@ -62,14 +72,15 @@ def expected_headline_result():
 
     return result
 
+
 @pytest.fixture
 def expected_result_dict():
     result_dict = {
         "predicted_serotype": "1",
         "rag_status": "GREEN",
         "stage1_result": "1",
-        "stage2_result": '{}',
-        "stage2_hits": '{}',
+        "stage2_result": {},
+        "stage2_hits": {},
         "top_hit_info": {
             "serotype": "01",
             "top_hit_identity": "0.981234567",
@@ -77,10 +88,17 @@ def expected_result_dict():
             "top_hit_shared_hashes": "961/1000",
             "top_hit_median_multiplicity": "50",
         },
-        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
+        "top_5_hits": {
+            "01": 96.1,
+            "02": 80.3,
+            "19A-II": 79.3,
+            "12A": 30.2,
+            "11A/11D": 27.6,
+        },
     }
 
     return result_dict
+
 
 @pytest.fixture
 def expected_result_dict_with_analysis_status():
@@ -89,8 +107,8 @@ def expected_result_dict_with_analysis_status():
         "rag_status": "GREEN",
         "analysis_status": "Pass",
         "stage1_result": "1",
-        "stage2_result": '{}',
-        "stage2_hits": '{}',
+        "stage2_result": {},
+        "stage2_hits": {},
         "top_hit_info": {
             "serotype": "01",
             "top_hit_identity": "0.981234567",
@@ -98,10 +116,17 @@ def expected_result_dict_with_analysis_status():
             "top_hit_shared_hashes": "961/1000",
             "top_hit_median_multiplicity": "50",
         },
-        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
+        "top_5_hits": {
+            "01": 96.1,
+            "02": 80.3,
+            "19A-II": 79.3,
+            "12A": 30.2,
+            "11A/11D": 27.6,
+        },
     }
 
     return result_dict
+
 
 @pytest.fixture
 def expected_result_dict_with_vaccine_status():
@@ -110,8 +135,8 @@ def expected_result_dict_with_vaccine_status():
         "rag_status": "GREEN",
         "analysis_status": "Pass",
         "stage1_result": "1",
-        "stage2_result": '{}',
-        "stage2_hits": '{}',
+        "stage2_result": {},
+        "stage2_hits": {},
         "top_hit_info": {
             "serotype": "01",
             "top_hit_identity": "0.981234567",
@@ -124,16 +149,24 @@ def expected_result_dict_with_vaccine_status():
             "PCV13": "Included",
             "PCV15": "Included",
             "PCV20": "Included",
-            "PPV23": "Included"
+            "PPV23": "Included",
         },
-        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
+        "top_5_hits": {
+            "01": 96.1,
+            "02": 80.3,
+            "19A-II": 79.3,
+            "12A": 30.2,
+            "11A/11D": 27.6,
+        },
     }
 
     return result_dict
 
 
 @pytest.fixture
-def expected_fields_dict(expected_quality_dict, expected_result_dict_with_vaccine_status):
+def expected_fields_dict(
+    expected_quality_dict, expected_result_dict_with_vaccine_status
+):
     fields_dict = {
         "identifiers": [],
         "name": "ukhsa-streptococcus-pneumoniae-serotyping",
@@ -146,10 +179,11 @@ def expected_fields_dict(expected_quality_dict, expected_result_dict_with_vaccin
         "result": "1",
         "result_metrics": expected_result_dict_with_vaccine_status,
         "synthscape_records": ["C-TEST"],
-        "outputs": "No s3 outputs"
+        "outputs": "No s3 outputs",
     }
 
     return fields_dict
+
 
 # Incomplete serotype
 @pytest.fixture
@@ -159,8 +193,8 @@ def expected_result_dict_incomplete_serotype():
         "analysis_status": "Pass",
         "rag_status": "RED",
         "stage1_result": "",
-        "stage2_result": '{}',
-        "stage2_hits": '{}',
+        "stage2_result": {},
+        "stage2_hits": {},
         "top_hit_info": {
             "serotype": "12F_12A_12B_44_46",
             "top_hit_identity": "0.975366",
@@ -168,10 +202,17 @@ def expected_result_dict_incomplete_serotype():
             "top_hit_shared_hashes": "975/1000",
             "top_hit_median_multiplicity": "10",
         },
-        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
+        "top_5_hits": {
+            "01": 96.1,
+            "02": 80.3,
+            "19A-II": 79.3,
+            "12A": 30.2,
+            "11A/11D": 27.6,
+        },
     }
 
     return result_dict
+
 
 @pytest.fixture
 def expected_result_dict_incomplete_serotype_vaccine_status():
@@ -180,8 +221,8 @@ def expected_result_dict_incomplete_serotype_vaccine_status():
         "analysis_status": "Pass",
         "rag_status": "RED",
         "stage1_result": "",
-        "stage2_result": '{}',
-        "stage2_hits": '{}',
+        "stage2_result": {},
+        "stage2_hits": {},
         "top_hit_info": {
             "serotype": "12F_12A_12B_44_46",
             "top_hit_identity": "0.975366",
@@ -194,12 +235,19 @@ def expected_result_dict_incomplete_serotype_vaccine_status():
             "PCV13": "Not included",
             "PCV15": "Not included",
             "PCV20": "Inconclusive",
-            "PPV23": "Inconclusive"
+            "PPV23": "Inconclusive",
         },
-        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
+        "top_5_hits": {
+            "01": 96.1,
+            "02": 80.3,
+            "19A-II": 79.3,
+            "12A": 30.2,
+            "11A/11D": 27.6,
+        },
     }
 
     return result_dict
+
 
 # Fail test fixtures
 @pytest.fixture
@@ -208,8 +256,8 @@ def expected_result_dict_fail():
         "predicted_serotype": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
         "rag_status": "RED",
         "stage1_result": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
-        "stage2_result": '{}',
-        "stage2_hits": '{}',
+        "stage2_result": {},
+        "stage2_hits": {},
         "top_hit_info": {
             "serotype": "12",
             "top_hit_identity": "0.234366",
@@ -217,10 +265,17 @@ def expected_result_dict_fail():
             "top_hit_shared_hashes": "234/1000",
             "top_hit_median_multiplicity": "10",
         },
-        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
+        "top_5_hits": {
+            "01": 96.1,
+            "02": 80.3,
+            "19A-II": 79.3,
+            "12A": 30.2,
+            "11A/11D": 27.6,
+        },
     }
 
     return result_dict
+
 
 @pytest.fixture
 def expected_result_dict_with_analysis_status_fail():
@@ -229,8 +284,8 @@ def expected_result_dict_with_analysis_status_fail():
         "analysis_status": "Fail",
         "rag_status": "RED",
         "stage1_result": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
-        "stage2_result": '{}',
-        "stage2_hits": '{}',
+        "stage2_result": {},
+        "stage2_hits": {},
         "top_hit_info": {
             "serotype": "12",
             "top_hit_identity": "0.234366",
@@ -238,10 +293,17 @@ def expected_result_dict_with_analysis_status_fail():
             "top_hit_shared_hashes": "234/1000",
             "top_hit_median_multiplicity": "10",
         },
-        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
+        "top_5_hits": {
+            "01": 96.1,
+            "02": 80.3,
+            "19A-II": 79.3,
+            "12A": 30.2,
+            "11A/11D": 27.6,
+        },
     }
 
     return result_dict
+
 
 @pytest.fixture
 def expected_result_dict_with_vaccine_status_fail():
@@ -250,8 +312,8 @@ def expected_result_dict_with_vaccine_status_fail():
         "analysis_status": "Fail",
         "rag_status": "RED",
         "stage1_result": "Below 20% hit - inadequate DNA or acapsular organismorganism, check species identity and sequence quality.",
-        "stage2_result": '{}',
-        "stage2_hits": '{}',
+        "stage2_result": {},
+        "stage2_hits": {},
         "top_hit_info": {
             "serotype": "12",
             "top_hit_identity": "0.234366",
@@ -264,12 +326,19 @@ def expected_result_dict_with_vaccine_status_fail():
             "PCV13": "No result",
             "PCV15": "No result",
             "PCV20": "No result",
-            "PPV23": "No result"
+            "PPV23": "No result",
         },
-        "top_5_hits": "{'01': 96.1, '02': 80.3, '19A-II': 79.3, '12A': 30.2, '11A/11D': 27.6}",
+        "top_5_hits": {
+            "01": 96.1,
+            "02": 80.3,
+            "19A-II": 79.3,
+            "12A": 30.2,
+            "11A/11D": 27.6,
+        },
     }
 
     return result_dict
+
 
 # Tests
 def test_get_pneumokity_quality_info(quality_file, expected_quality_dict):
@@ -281,6 +350,7 @@ def test_get_pneumokity_quality_info(quality_file, expected_quality_dict):
 
     assert quality_dict == expected_quality_dict
 
+
 def test_get_pneumokity_result_info(result_file, data_file, expected_result_dict):
 
     result_dict = pat.get_pneumokity_results(result_file, data_file)
@@ -288,6 +358,7 @@ def test_get_pneumokity_result_info(result_file, data_file, expected_result_dict
     print(result_dict)
 
     assert result_dict == expected_result_dict
+
 
 @pytest.mark.parametrize(
     "result_dict,expected_output",
@@ -306,12 +377,25 @@ def test_get_analysis_status(result_dict, expected_output, request):
 
     assert updated_result_dict == expected_output
 
+
 @pytest.mark.parametrize(
     "result_dict,vaccine_info_file,expected_output",
     [
-        ("expected_result_dict_with_analysis_status", "vaccine_file", "expected_result_dict_with_vaccine_status"),
-        ("expected_result_dict_incomplete_serotype", "vaccine_file", "expected_result_dict_incomplete_serotype_vaccine_status"),
-        ("expected_result_dict_with_analysis_status_fail", "vaccine_file", "expected_result_dict_with_vaccine_status_fail")
+        (
+            "expected_result_dict_with_analysis_status",
+            "vaccine_file",
+            "expected_result_dict_with_vaccine_status",
+        ),
+        (
+            "expected_result_dict_incomplete_serotype",
+            "vaccine_file",
+            "expected_result_dict_incomplete_serotype_vaccine_status",
+        ),
+        (
+            "expected_result_dict_with_analysis_status_fail",
+            "vaccine_file",
+            "expected_result_dict_with_vaccine_status_fail",
+        ),
     ],
 )
 def test_get_vaccine_status(result_dict, vaccine_info_file, expected_output, request):
@@ -326,9 +410,20 @@ def test_get_vaccine_status(result_dict, vaccine_info_file, expected_output, req
     assert vaccine_dict == expected_output
 
 
-def test_create_analysis_fields(expected_quality_dict, expected_result_dict_with_vaccine_status, expected_fields_dict, expected_pipeline_info):
+def test_create_analysis_fields(
+    expected_quality_dict,
+    expected_result_dict_with_vaccine_status,
+    expected_fields_dict,
+    expected_pipeline_info,
+):
 
-    analysis_fields, exitcode = pat.create_analysis_fields("C-TEST", expected_quality_dict, expected_result_dict_with_vaccine_status, "synthscape", expected_pipeline_info)
+    analysis_fields, exitcode = pat.create_analysis_fields(
+        "C-TEST",
+        expected_quality_dict,
+        expected_result_dict_with_vaccine_status,
+        "synthscape",
+        expected_pipeline_info,
+    )
 
     print(analysis_fields.__dict__)
 

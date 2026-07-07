@@ -37,10 +37,10 @@ def moto_server(aws_credentials):
     """Fixture to run a mocked AWS server for testing."""
 
     # Note: pass `port=0` to get a random free port.
-    server = ThreadedMotoServer(port=0)
+    server = ThreadedMotoServer(ip_address="0.0.0.0", port=0)
     server.start()
     host, port = server.get_host_and_port()
-    yield f"http://{host}:{port}"
+    yield f"http://127.0.0.1:{port}"
     server.stop()
 
 
@@ -80,8 +80,6 @@ def data_file():
     return file
 
 
-
-
 @pytest.fixture
 def s3_file_list():
     files = [
@@ -95,7 +93,9 @@ def s3_file_list():
 @pytest.fixture
 def s3_file(s3_client, test_bucket, example_result_file):
     s3_client.upload_file(
-        example_result_file, "testbucket", "A-TEST/A-TEST_C-TEST_quality_system_data.csv"
+        example_result_file,
+        "testbucket",
+        "A-TEST/A-TEST_C-TEST_quality_system_data.csv",
     )
 
 
@@ -117,6 +117,7 @@ def test_read_analysis_id_from_file(analysis_id_file):
 
     print(tuple_return)
     assert tuple_return == ("A-TEST", 0)
+
 
 @mock_aws
 def test_upload_file_to_s3(
