@@ -5,7 +5,7 @@ the characterisation of Streptococcus pneumoniae in metagenomic samples.
 
 ## Installation
 
-To clone this repo:  
+To clone this repo:
 `git clone git@github.com:ukhsa-collaboration/gpha-mscape-nf-strep-pneumo.git`
 
 No further installation is required for use on Bryn as the nextflow pipeline

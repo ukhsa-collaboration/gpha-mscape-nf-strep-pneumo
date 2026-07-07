@@ -39,7 +39,9 @@ def get_args():
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # Add base args shared by all sub-parsers
-    base_subparser.add_argument("--climbid", "-i", type=str, required=True, help="Sample ID")
+    base_subparser.add_argument(
+        "--climbid", "-i", type=str, required=True, help="Sample ID"
+    )
     base_subparser.add_argument(
         "--output", "-o", type=str, required=True, help="Folder to save outputs"
     )
@@ -73,17 +75,27 @@ def get_args():
         "write", parents=[base_subparser], help="Write initial analysis table to onyx"
     )
     onyx_write_subparser.add_argument(
-        "--input-json", "-j", type=Path, help="Path to input file with onyx analysis json"
+        "--input-json",
+        "-j",
+        type=Path,
+        help="Path to input file with onyx analysis json",
     )
 
     # s3 push
     s3_subparser = subparsers.add_parser(
         "s3_upload", parents=[base_subparser], help="Push analysis files to s3"
     )
-    s3_subparser.add_argument("--bucket", "-b", type=str, help="s3 bucket to push files to")
-    s3_subparser.add_argument("--analysis-id", "-a", type=str, help="File containing analysis ID")
     s3_subparser.add_argument(
-        "--input-files", "-f", type=str, help="Comma separated list of files to be uploaded to s3"
+        "--bucket", "-b", type=str, help="s3 bucket to push files to"
+    )
+    s3_subparser.add_argument(
+        "--analysis-id", "-a", type=str, help="File containing analysis ID"
+    )
+    s3_subparser.add_argument(
+        "--input-files",
+        "-f",
+        type=str,
+        help="Comma separated list of files to be uploaded to s3",
     )
     # Onyx update
     onyx_update_subparser = subparsers.add_parser(
@@ -124,7 +136,9 @@ def set_up_logger(stdout_file):
 
 
 # General functions
-def read_analysis_id_from_file(analysis_id_file: Path, exitcode: int) -> tuple[str | None, int]:
+def read_analysis_id_from_file(
+    analysis_id_file: Path, exitcode: int
+) -> tuple[str | None, int]:
     """Function to read in analysis ID from file. If file not correct structure or can't be
     found, a non-zero exitcode is returned.
     Arguments:
@@ -151,7 +165,9 @@ def read_analysis_id_from_file(analysis_id_file: Path, exitcode: int) -> tuple[s
                 exitcode = 1
                 return None, exitcode
     except Exception as error:
-        logging.error("Couldn't read analysis_id from file: %s, %s", analysis_id_file, error)
+        logging.error(
+            "Couldn't read analysis_id from file: %s, %s", analysis_id_file, error
+        )
         exitcode = 1
         return None, exitcode
 
@@ -179,14 +195,20 @@ def upload_files_to_s3(
     # Attempt upload to s3
     for file in local_file_list:
         s3_uri, exitcode = s3f.upload_file_to_s3(
-            analysis_id=analysis_id, bucket=bucket, file_for_upload=file, s3_client=s3_client
+            analysis_id=analysis_id,
+            bucket=bucket,
+            file_for_upload=file,
+            s3_client=s3_client,
         )
         s3_file_list.append(s3_uri)
         if exitcode == 0:
             logging.info("S3 transfer complete for %s", file)
         else:
             logging.error("S3 transfer failed for %s, see logs for details", file)
-            return None, exitcode  # Exit s3 upload attempts if any fail? Or try other files?
+            return (
+                None,
+                exitcode,
+            )  # Exit s3 upload attempts if any fail? Or try other files?
 
     return s3_file_list, exitcode
 
@@ -228,7 +250,9 @@ def main():
     exitcode = 0
 
     # Set up log file
-    log_file = Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.log.txt"
+    log_file = (
+        Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.log.txt"
+    )
     set_up_logger(log_file)
 
     # Check if test or prod run
@@ -240,7 +264,8 @@ def main():
     if args.command == "write":
         # Check if analysis ID file already exists
         analysis_id_file = (
-            Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
+            Path(args.output)
+            / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
         )
         if analysis_id_file.exists():
             logging.info("Existing analysis ID file found, exiting program")
@@ -249,9 +274,13 @@ def main():
         try:
             onyx_analysis = oa.OnyxAnalysis()
             onyx_analysis.read_analysis_from_json(args.input_json)
-            logging.info("Analysis table successfully read from json: %s", args.input_json)
+            logging.info(
+                "Analysis table successfully read from json: %s", args.input_json
+            )
         except Exception as error:
-            logging.error("Couldn't read analysis from json: %s, %s", args.input_json, error)
+            logging.error(
+                "Couldn't read analysis from json: %s, %s", args.input_json, error
+            )
             exitcode = 1
             return exitcode
         # Check correctly formatted
@@ -271,7 +300,7 @@ def main():
             return exitcode
         # Write analysis ID to file
         if not dryrun:
-            analysis_id = analysis_id['analysis_id']
+            analysis_id = analysis_id["analysis_id"]
         with Path(analysis_id_file).open("w") as file:
             file.write(f"{analysis_id}")
         logging.info("Analysis ID written to file %s", analysis_id_file)
@@ -308,9 +337,13 @@ def main():
         onyx_analysis = oa.OnyxAnalysis()
         try:
             onyx_analysis.read_analysis_from_json(args.input_json)
-            logging.info("Analysis table successfully read from json: %s", args.input_json)
+            logging.info(
+                "Analysis table successfully read from json: %s", args.input_json
+            )
         except Exception as error:
-            logging.error("Couldn't read analysis from json: %s, %s", args.input_json, error)
+            logging.error(
+                "Couldn't read analysis from json: %s, %s", args.input_json, error
+            )
             exitcode = 1
             return exitcode
         # Write to onyx
@@ -325,7 +358,8 @@ def main():
             return exitcode
         # Write analysis ID to file
         analysis_id_file = (
-            Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
+            Path(args.output)
+            / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
         )
         with Path(analysis_id_file).open("w") as file:
             file.write(f"{analysis_id['analysis_id']}")
@@ -346,10 +380,13 @@ def main():
             publish_analysis=True,
         )
         if exitcode != 0:
-            logging.error("Unsuccessful publishing of onyx analysis, check logs for details.")
+            logging.error(
+                "Unsuccessful publishing of onyx analysis, check logs for details."
+            )
         # Write analysis ID to file
         analysis_id_file = (
-            Path(args.output) / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
+            Path(args.output)
+            / f"{args.climbid}.onyx_analysis.{args.command}.analysis_id.txt"
         )
         with Path(analysis_id_file).open("w") as file:
             file.write(f"{analysis_id['analysis_id']}")

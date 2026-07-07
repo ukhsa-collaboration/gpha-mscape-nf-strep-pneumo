@@ -1,29 +1,29 @@
 predicted_serotype_incomplete:
-    12F_12A_12B_44_46: 
+    12F_12A_12B_44_46:
         result: "Cannot split vaccine type from non-vaccine type serotypes"
         PCV13: "Not included"
         PCV15: "Not included"
         PCV20: "Inconclusive"
         PPV23: "Inconclusive"
-    15F_15A_15D: 
+    15F_15A_15D:
         result: "Non-vaccine serotype"
         PCV13: "Not included"
         PCV15: "Not included"
         PCV20: "Not included"
         PPV23: "Not included"
-    19A_19F: 
+    19A_19F:
         result: "Vaccine serotype. Cannot confirm serotype in PCV7"
         PCV13: "Included"
         PCV15: "Included"
         PCV20: "Included"
         PPV23: "Included"
-    25F_25A_38: 
+    25F_25A_38:
         result: "Non-vaccine serotype"
         PCV13: "Not included"
         PCV15: "Not included"
         PCV20: "Not included"
         PPV23: "Not included"
-    6A_6B_6C_6D: 
+    6A_6B_6C_6D:
         result: "Cannot split vaccine type from non-vaccine type serotypes"
         PCV13: "Inconclusive"
         PCV15: "Inconclusive"

@@ -20,6 +20,7 @@ CONFIG = OnyxConfig(
     token=os.environ[OnyxEnv.TOKEN],
 )
 
+
 # Args and logging
 def get_args():
     """Get command line arguments"""
@@ -31,7 +32,11 @@ def get_args():
     )
     parser.add_argument("--input", "-i", type=str, required=True, help="Sample ID")
     parser.add_argument(
-        "--output", "-o", type=str, required=True, help="Folder to save downloaded files to"
+        "--output",
+        "-o",
+        type=str,
+        required=True,
+        help="Folder to save downloaded files to",
     )
     parser.add_argument(
         "--server",
@@ -66,13 +71,13 @@ def set_up_logger(stdout_file):
 def retrieve_sample_information(climb_id: str, project: str):
     "Retrieves sample information from onyx and returns as dataframe"
     with OnyxClient(CONFIG) as client:
-        sample_data = pd.DataFrame(client.query(
-            project = project,
-            query=(
-                OnyxField(climb_id=climb_id)
-            ),
-            include=("climb_id", "taxon_reports", "human_filtered_reads_1")
-        ))
+        sample_data = pd.DataFrame(
+            client.query(
+                project=project,
+                query=(OnyxField(climb_id=climb_id)),
+                include=("climb_id", "taxon_reports", "human_filtered_reads_1"),
+            )
+        )
 
     exitcode = 0
 
@@ -85,19 +90,23 @@ def get_s3_paths(sample_data: pd.DataFrame):
     s3_dict = {}
 
     # Get climb id from df
-    climb_id = sample_data['climb_id'].values[0]
+    climb_id = sample_data["climb_id"].values[0]
 
     # Extract bucket names from s3 address in df
-    s3_dict['taxon_bucket'] = sample_data['taxon_reports'].values[0].split("s3://")[1].split("/")[0]
-    s3_dict['reads_bucket'] = sample_data['human_filtered_reads_1'].values[0].split("s3://")[1].split("/")[0]
+    s3_dict["taxon_bucket"] = (
+        sample_data["taxon_reports"].values[0].split("s3://")[1].split("/")[0]
+    )
+    s3_dict["reads_bucket"] = (
+        sample_data["human_filtered_reads_1"].values[0].split("s3://")[1].split("/")[0]
+    )
 
     # Get basename for fastq file
-    input_fastq_file = Path(sample_data['human_filtered_reads_1'].values[0]).name
+    input_fastq_file = Path(sample_data["human_filtered_reads_1"].values[0]).name
 
     # s3 keys without bucket names
-    s3_dict['kraken_stdout'] = f"{climb_id}/{climb_id}_PlusPF.kraken_assignments.tsv"
-    s3_dict['kraken_report'] = f"{climb_id}/{climb_id}_PlusPF.kraken_report.txt"
-    s3_dict['input_fastq'] = f"{climb_id}/{input_fastq_file}"
+    s3_dict["kraken_stdout"] = f"{climb_id}/{climb_id}_PlusPF.kraken_assignments.tsv"
+    s3_dict["kraken_report"] = f"{climb_id}/{climb_id}_PlusPF.kraken_report.txt"
+    s3_dict["input_fastq"] = f"{climb_id}/{input_fastq_file}"
 
     return s3_dict
 
@@ -108,11 +117,17 @@ def download_files_from_s3(s3_dict: dict, outdir: os.path):
     exitcodes = {0}
 
     s3_client = s3f.set_up_s3_client()
-    local_dict['kraken_stdout'], exitcode = s3f.download_file_from_s3(s3_client, s3_dict['taxon_bucket'], s3_dict['kraken_stdout'], outdir)
+    local_dict["kraken_stdout"], exitcode = s3f.download_file_from_s3(
+        s3_client, s3_dict["taxon_bucket"], s3_dict["kraken_stdout"], outdir
+    )
     exitcodes.add(exitcode)
-    local_dict['kraken_report'], exitcode = s3f.download_file_from_s3(s3_client, s3_dict['taxon_bucket'], s3_dict['kraken_report'], outdir)
+    local_dict["kraken_report"], exitcode = s3f.download_file_from_s3(
+        s3_client, s3_dict["taxon_bucket"], s3_dict["kraken_report"], outdir
+    )
     exitcodes.add(exitcode)
-    local_dict['input_fastq'], exitcode = s3f.download_file_from_s3(s3_client, s3_dict['reads_bucket'], s3_dict['input_fastq'], outdir)
+    local_dict["input_fastq"], exitcode = s3f.download_file_from_s3(
+        s3_client, s3_dict["reads_bucket"], s3_dict["input_fastq"], outdir
+    )
     exitcodes.add(exitcode)
 
     if exitcodes == {0}:
@@ -150,6 +165,7 @@ def main():
         return exitcode
 
     return exitcode
+
 
 if __name__ == "__main__":
     sys.exit(main())
