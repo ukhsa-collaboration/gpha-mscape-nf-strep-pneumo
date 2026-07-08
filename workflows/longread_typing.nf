@@ -22,10 +22,10 @@ workflow LONGREAD_TYPING {
         extract_reads,
         taxid
     )
-
+    ch_pneumokity = LONGREAD_KMER_SEROTYPING.out.pneumokity_complete
+        .join(LONGREAD_KMER_SEROTYPING.out.pneumokity_files)
     COLLATE_SEROTYPING_RESULTS(
-        LONGREAD_KMER_SEROTYPING.out.pneumokity_complete,
-        LONGREAD_KMER_SEROTYPING.out.pneumokity_files,
+        ch_pneumokity,
         ch_vaccine_serotypes,
         server,
         bucket

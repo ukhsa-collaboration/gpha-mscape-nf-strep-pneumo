@@ -11,7 +11,7 @@ process RUN_PNEUMOKITY {
         Outputs:
             - results_folder: Folder containing pneumokity results
     */
-    container 'docker.io/nanozoo/pneumokity:1.0--ec3a71f'
+    container 'ghcr.io/ukhsa-collaboration/pneumokity:1.0.1'
     cpus 2
     memory '2GB'
     tag "${meta.id}"
@@ -22,12 +22,12 @@ process RUN_PNEUMOKITY {
 
     output:
     tuple val(meta), path("pneumokity_complete.txt"), optional: true, emit: pneumokity_complete
-    tuple path("pneumo_capsular_typing/${meta.id}_alldata.csv"), path("pneumo_capsular_typing/${meta.id}_quality_system_data.csv"), path("pneumo_capsular_typing/${meta.id}_result_data.csv"), optional: true, emit: pneumokity_files
+    tuple val(meta), path("pneumo_capsular_typing/${meta.id}_alldata.csv"), path("pneumo_capsular_typing/${meta.id}_quality_system_data.csv"), path("pneumo_capsular_typing/${meta.id}_result_data.csv"), optional: true, emit: pneumokity_files
 
     script:
     """
     set +e
-    pneumokity.py mix -f $filtered_fastq $filtered_fastq -o . &> pneumokity_stdout.txt
+    pneumokity mix -f $filtered_fastq $filtered_fastq -o . &> pneumokity_stdout.txt
     exit_status=\$?
     if [ \$exit_status == 0 ] ; then
         result="True"
@@ -35,6 +35,9 @@ process RUN_PNEUMOKITY {
         exit \$exit_status
     elif grep "ERROR: No Mash data - empty file" pneumokity_stdout.txt ; then
         result="False"
+        touch pneumo_capsular_typing/${meta.id}_alldata.csv
+        touch pneumo_capsular_typing/${meta.id}_quality_system_data.csv
+        touch pneumo_capsular_typing/${meta.id}_result_data.csv
         echo \$result > pneumokity_complete.txt
         exit_status=0
         exit \$exit_status
@@ -42,5 +45,4 @@ process RUN_PNEUMOKITY {
         exit \$exit_status
     fi
     """
-
    }

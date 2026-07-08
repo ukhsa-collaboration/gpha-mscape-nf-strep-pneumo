@@ -15,16 +15,15 @@ process ONYX_UPDATE {
             - logs: Path to log file for process
 
     */
-    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.3.1'
+    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.1'
     cpus 1
     memory '1GB'
     tag "${meta.id}"
     publishDir "${params.outdir}/${meta.id}/onyx", mode: params.publish_dir_mode
 
     input:
+    tuple val(meta), path(analysis_id), path(update_json)
     val server
-    tuple val(meta), path(analysis_id)
-    tuple val(meta), path(update_json)
 
     output:
     tuple val(meta), path("${meta.id}.onyx_analysis.update.analysis_id.txt"), emit: analysis_id

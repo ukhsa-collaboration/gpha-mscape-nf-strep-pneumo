@@ -1,43 +1,37 @@
 predicted_serotype_incomplete:
-    12F_12A_12B_44_46: 
+    12F_12A_12B_44_46:
         result: "Cannot split vaccine type from non-vaccine type serotypes"
-        PCV7: "Not included"
         PCV13: "Not included"
         PCV15: "Not included"
         PCV20: "Inconclusive"
         PPV23: "Inconclusive"
-    15F_15A_15D: 
+    15F_15A_15D:
         result: "Non-vaccine serotype"
-        PCV7: "Not included"
         PCV13: "Not included"
         PCV15: "Not included"
         PCV20: "Not included"
         PPV23: "Not included"
-    19A_19F: 
+    19A_19F:
         result: "Vaccine serotype. Cannot confirm serotype in PCV7"
-        PCV7: "Inconclusive"
         PCV13: "Included"
         PCV15: "Included"
         PCV20: "Included"
         PPV23: "Included"
-    25F_25A_38: 
+    25F_25A_38:
         result: "Non-vaccine serotype"
-        PCV7: "Not included"
         PCV13: "Not included"
         PCV15: "Not included"
         PCV20: "Not included"
         PPV23: "Not included"
-    6A_6B_6C_6D: 
+    6A_6B_6C_6D:
         result: "Cannot split vaccine type from non-vaccine type serotypes"
-        PCV7: "Inconclusive"
         PCV13: "Inconclusive"
         PCV15: "Inconclusive"
         PCV20: "Inconclusive"
         PPV23: "Inconclusive"
 
 vaccine_serotypes:
-    PCV7: ["04", "6B", "9V", "14", "18C", "19F", "23F"]
-    PCV13: ["01", "03", "04", "05", "6A", "6B", "7F", "9V", "14", "18C", "19A", "19F", "23F"]
-    PCV15: ["01", "03", "04", "05", "6A", "6B", "7F", "9V", "14", "18C", "19A", "19F", "22F", "23F", "33F"]
-    PCV20: ["01", "03", "04", "05", "6A", "6B", "7F", "08", "9V", "10A", "11A", "12F", "14", "15B", "18C", "19A", "19F", "22F", "23F", "33F"]
-    PPV23: ["01", "02", "03", "04", "05", "6B", "7F", "08", "9N", "9V", "10A", "11A", "12F", "14", "15B", "17F", "18C", "19A", "19F", "20", "22F", "23F", "33F"]
+    PCV13: ["1", "3", "4", "5", "6A", "6B", "7F", "9V", "14", "18C", "19A", "19F", "23F"]
+    PCV15: ["1", "3", "4", "5", "6A", "6B", "7F", "9V", "14", "18C", "19A", "19F", "22F", "23F", "33F"]
+    PCV20: ["1", "3", "4", "5", "6A", "6B", "7F", "8", "9V", "10A", "11A", "12F", "14", "15B", "15C", "18C", "19A", "19F", "22F", "23F", "33F"]
+    PPV23: ["1", "2", "3", "4", "5", "6B", "7F", "8", "9N", "9V", "10A", "11A", "12F", "14", "15B", "17F", "18C", "19A", "19F", "20", "22F", "23F", "33F"]

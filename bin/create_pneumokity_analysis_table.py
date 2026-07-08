@@ -35,7 +35,11 @@ def get_args():
     )
     parser.add_argument("--climbid", "-i", type=str, required=True, help="Sample ID")
     parser.add_argument(
-        "--output", "-o", type=str, required=True, help="Folder to save downloaded files to"
+        "--output",
+        "-o",
+        type=str,
+        required=True,
+        help="Folder to save downloaded files to",
     )
     parser.add_argument(
         "--vaccine-serotypes",
@@ -64,7 +68,7 @@ def get_args():
         "-r",
         type=str,
         required=True,
-        help="Argument stating whether pneumokity ran successfully"
+        help="Argument stating whether pneumokity ran successfully",
     )
     # Add group options to specify onyx behaviour
     group = parser.add_mutually_exclusive_group(required=True)
@@ -116,7 +120,9 @@ def get_pneumokity_quality_info(quality_file: os.path) -> dict:
         quality_dict -- Dictionary of quality system information
     """
     with Path(quality_file).open("r") as file:
-        quality_info = pd.read_csv(quality_file, converters={"fastq_files": literal_eval}).loc[0]
+        quality_info = pd.read_csv(file, converters={"fastq_files": literal_eval}).loc[
+            0
+        ]
 
     # Pull out relevant fields to make dict
     quality_dict = {
@@ -157,6 +163,7 @@ def get_pneumokity_results(result_file: os.path, all_data_file: os.path) -> dict
         "rag_status": result_summary["rag_status"],
         "stage1_result": result_summary["stage1_result"],
         "stage2_result": result_summary["stage2_result"],
+        "stage2_hits": result_summary["stage2_hits"],
         "top_hit_info": {
             "serotype": top_hit_data["Serotype"],
             "top_hit_identity": top_hit_data["identity"],
@@ -183,10 +190,9 @@ def get_analysis_status(result_dict: dict):
         "Median multiplicity low",
     ]
 
-    if result_dict["predicted_serotype"] in fails:
-        result_dict["analysis_status"] = "Fail"
-    else:
-        result_dict["analysis_status"] = "Pass"
+    result_dict["analysis_status"] = next(
+        ("Fail" for fail in fails if fail in result_dict["predicted_serotype"]), "Pass"
+    )
 
     return result_dict
 
@@ -212,7 +218,6 @@ def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
     if result_dict["analysis_status"] == "Fail":
         result_dict["vaccine_status"] = "No result"
         result_dict["vaccine_coverage"] = {
-            "PCV7": "No result",
             "PCV13": "No result",
             "PCV15": "No result",
             "PCV20": "No result",
@@ -221,11 +226,10 @@ def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
 
     # Handle incomplete serotype outcomes
     elif serotype in vaccine_dict["predicted_serotype_incomplete"].keys():
-        result_dict["vaccine_status"] = vaccine_dict["predicted_serotype_incomplete"][serotype][
-            "result"
-        ]
+        result_dict["vaccine_status"] = vaccine_dict["predicted_serotype_incomplete"][
+            serotype
+        ]["result"]
         result_dict["vaccine_coverage"] = {
-            "PCV7": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV7"],
             "PCV13": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV13"],
             "PCV15": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV15"],
             "PCV20": vaccine_dict["predicted_serotype_incomplete"][serotype]["PCV20"],
@@ -377,12 +381,16 @@ def main():
 
     # Exit if analysis object not made correctly
     if exitcode == 1:
-        logging.error("Invalid attribute in analysis fields submitted, check logs for details")
+        logging.error(
+            "Invalid attribute in analysis fields submitted, check logs for details"
+        )
         return exitcode
 
     # Store analysis table info in json file
     if args.store_onyx:
-        onyx_json_file = Path(args.output) / f"{args.climbid}.serotyping.analysis_fields.json"
+        onyx_json_file = (
+            Path(args.output) / f"{args.climbid}.serotyping.analysis_fields.json"
+        )
         result_file = onyx_analysis.write_analysis_to_json(result_file=onyx_json_file)
         logging.info("Onyx analysis fields written to file %s", result_file)
         exitcode = 0

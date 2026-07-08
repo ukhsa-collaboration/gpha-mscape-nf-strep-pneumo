@@ -15,7 +15,7 @@ process S3_UPLOAD {
             - s3_locations: Tuple of sample metadata and path to s3 locations file
             - logs: Path to log file for process
     */
-    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.3.1'
+    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.1'
     cpus 1
     memory '1GB'
     tag "${meta.id}"
@@ -23,10 +23,9 @@ process S3_UPLOAD {
     publishDir "${params.outdir}/${meta.id}/onyx", mode: params.publish_dir_mode
 
     input:
-    tuple path(alldata_csv), path(quality_csv), path(result_csv)
+    tuple val(meta), path(alldata_csv), path(quality_csv), path(result_csv), path(analysis_id)
     val server
     val bucket
-    tuple val(meta), path(analysis_id)
 
     output:
     tuple val(meta), path("${meta.id}.onyx_analysis.s3_upload.analysis_fields.json"), emit: s3_locations
