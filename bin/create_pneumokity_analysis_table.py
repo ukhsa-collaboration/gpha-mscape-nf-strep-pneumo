@@ -6,7 +6,6 @@ results and create an onyx analysis table format json file.
 
 # Imports
 import argparse
-import json
 import logging
 import os
 import sys
@@ -388,9 +387,9 @@ def main():
     log_file = Path(args.output) / f"{args.climbid}.serotyping.analysis_fields.log.txt"
     set_up_logger(log_file)
 
-    if args.upstream_context:
+    if args.upstream_context and args.upstream_context != "null":
         try:
-            upstream_context = json.loads(args.upstream_context)
+            upstream_context = yaml.safe_load(args.upstream_context)
         except TypeError as t:
             logging.error(
                 "Cannot parse upstream context %s, %s", args.upstream_context, t
@@ -401,6 +400,9 @@ def main():
             "orange_box_version": "unknown",
             "onyx_versions_hash": "unknown",
         }
+    if len(upstream_context) > 2:
+        logging.error("upstream context has more than 2 keys, exiting.")
+        sys.exit()
 
     if args.pneumokity_result == "True":
         # Paths to pneumokity files
