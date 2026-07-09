@@ -13,7 +13,7 @@ workflow COLLATE_SEROTYPING_RESULTS {
     ch_vaccine_serotypes // channel: [path(yaml)]
     server // val: name of server running pipeline on
     bucket // val: name of bucket to upload results to
-    context // val: string of context from the samplsheet
+    context // val: string of context from the samplsheet (orange box version)
 
     main:
     ch_pneumokity

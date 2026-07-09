@@ -24,15 +24,13 @@ workflow {
     def ch_sample_inputs = ch_samplesheet
         .splitCsv(header: true, quote: '"')
         .map { row -> tuple([id: row.climb_id], row) }
-        .view()
         .multiMap { meta, row ->
             reads: [meta, file(row.fastq_1)]
             kraken_output: params.extract_reads ? [meta, file(row.kraken_output)] : []
             kraken_report: params.extract_reads ? [meta, file(row.kraken_report)] : []
-            context: params.context ? "\"${row.context}\"" : null
+            context: params.context ? row.orange_box_version : "unknown"
     }
-    ch_sample_inputs.reads.view()
-    ch_sample_inputs.context.view()
+
 
 
 
