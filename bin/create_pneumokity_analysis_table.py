@@ -6,6 +6,7 @@ results and create an onyx analysis table format json file.
 
 # Imports
 import argparse
+import json
 import logging
 import os
 import sys
@@ -69,6 +70,13 @@ def get_args():
         type=str,
         required=True,
         help="Argument stating whether pneumokity ran successfully",
+    )
+    parser.add_argument(
+        "--upstream_context",
+        "-u",
+        type=str,
+        required=False,
+        help="Upstream context dict containing orange box version and onyx versions hash",
     )
     # Add group options to specify onyx behaviour
     group = parser.add_mutually_exclusive_group(required=True)
@@ -300,7 +308,8 @@ def create_analysis_fields(
     pneumokity_results: dict,
     server: str,
     pipeline_info: dict,
-) -> dict:
+    context: dict,
+) -> tuple[oa.OnyxAnalysis, int]:
     """Set up fields dictionary used to populate analysis table containing
     Streptococcus pneumoniae serotyping results.
     Arguments:
@@ -309,6 +318,7 @@ def create_analysis_fields(
         headline_result -- Short description of main result- - from pnuemokity predicted serotype
         pneumokity_results -- Dictionary containing pneumokity results
         server -- Server code is running on, one of "mscape" or "synthscape"
+        context -- dict of upstream context containing orange box version and onyx versions hash.
     Returns:
         onyx_analysis -- Class containing required fields for input to onyx
                          analysis table
@@ -322,9 +332,27 @@ def create_analysis_fields(
     onyx_analysis.pipeline_name = pipeline_info["name"]
     onyx_analysis.pipeline_version = pipeline_info["version"]
     onyx_analysis.pipeline_url = pipeline_info["homePage"]
-    onyx_analysis.outputs = "No s3 outputs"
+    onyx_analysis.outputs = "No s3 outputs"  # ty:ignore[invalid-assignment]
+    # Add pneumokity settings and onyx analysis hash
+    methods_fail = onyx_analysis.add_methods(
+        methods_dict={
+            "pneumokity_settings": pneumokity_settings,
+        }
+    )
 
-    methods_fail = onyx_analysis.add_methods(methods_dict=pneumokity_settings)
+    _, onyx_versions, query_exitcode = oa.get_data_and_versions_from_onyx(
+        sample_id=record_id, server=server, fields=["climb_id"]
+    )
+
+    if query_exitcode == 0:
+        # Add onyx versions and orange box version
+        methods_versions_fail = onyx_analysis.add_versions_to_methods(
+            tool_versions={"orange_box_version": context["orange_box_version"]},
+            onyx_versions=onyx_versions,  # onyx versions hash automatically generated
+        )
+    else:
+        methods_versions_fail = False
+
     headline_result = pneumokity_results["predicted_serotype"]
     results_fail = onyx_analysis.add_results(
         top_result=headline_result, results_dict=pneumokity_results
@@ -334,7 +362,15 @@ def create_analysis_fields(
         publish_analysis=False
     )
 
-    if any([methods_fail, results_fail, required_field_fail, attribute_fail]):  # noqa SIM108
+    if any(
+        [
+            methods_fail,
+            methods_versions_fail,
+            results_fail,
+            required_field_fail,
+            attribute_fail,
+        ]
+    ):  # noqa SIM108
         exitcode = 1
     else:
         exitcode = 0
@@ -351,6 +387,21 @@ def main():
     # Set up log file
     log_file = Path(args.output) / f"{args.climbid}.serotyping.analysis_fields.log.txt"
     set_up_logger(log_file)
+
+    if args.upstream_context:
+        try:
+            upstream_context = json.loads(args.upstream_context)
+        except TypeError as t:
+            logging.error(
+                "Cannot parse upstream context %s, %s", args.upstream_context, t
+            )
+
+    else:
+        upstream_context = {
+            "orange_box_version": "unknown",
+            "onyx_versions_hash": "unknown",
+        }
+
     if args.pneumokity_result == "True":
         # Paths to pneumokity files
         quality_file = Path(args.output) / f"{args.climbid}_quality_system_data.csv"
@@ -377,6 +428,7 @@ def main():
         pneumokity_results=result_dict,
         server=args.server,
         pipeline_info=pipeline_dict,
+        context=upstream_context,
     )
 
     # Exit if analysis object not made correctly
