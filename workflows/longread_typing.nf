@@ -8,6 +8,7 @@ workflow LONGREAD_TYPING {
     ch_kraken_output
     ch_kraken_report
     ch_reads
+    context
     extract_reads
     taxid
     ch_vaccine_serotypes
@@ -28,7 +29,8 @@ workflow LONGREAD_TYPING {
         ch_pneumokity,
         ch_vaccine_serotypes,
         server,
-        bucket
+        bucket,
+        context
     )
 
     emit:

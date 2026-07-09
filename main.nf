@@ -28,6 +28,7 @@ workflow {
             reads: [meta, file(row.fastq_1)]
             kraken_output: params.extract_reads ? [meta, file(row.kraken_output)] : []
             kraken_report: params.extract_reads ? [meta, file(row.kraken_report)] : []
+            context: params.context ? [meta, file(row.context)] : []
     }
 
     def ch_vaccine_serotypes = Channel.value(
@@ -37,6 +38,7 @@ workflow {
         ch_sample_inputs.kraken_output,
         ch_sample_inputs.kraken_report,
         ch_sample_inputs.reads,
+        ch_sample_inputs.context,
         params.extract_reads,
         params.taxid,
         ch_vaccine_serotypes,

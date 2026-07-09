@@ -13,6 +13,7 @@ workflow COLLATE_SEROTYPING_RESULTS {
     ch_vaccine_serotypes // channel: [path(yaml)]
     server // val: name of server running pipeline on
     bucket // val: name of bucket to upload results to
+    context // val: string of context from the samplsheet
 
     main:
     ch_pneumokity
@@ -25,7 +26,7 @@ workflow COLLATE_SEROTYPING_RESULTS {
         .map { meta, pneumokity_complete, data_csv, qual_csv, result_csv -> tuple(meta, pneumokity_complete.text, data_csv, qual_csv, result_csv) }
         .set { ch_pneumokity_complete }
 
-    CREATE_PNEUMOKITY_ONYX_JSON(ch_pneumokity_complete, ch_vaccine_serotypes, server)
+    CREATE_PNEUMOKITY_ONYX_JSON(ch_pneumokity_complete, ch_vaccine_serotypes, server, context)
     ONYX_WRITE(CREATE_PNEUMOKITY_ONYX_JSON.out.pneumokity_summary, server)
     ch_s3_inputs = ch_pneumokity_complete
             .join(ONYX_WRITE.out.analysis_id)
