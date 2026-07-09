@@ -119,7 +119,7 @@ def set_up_logger(stdout_file):
 
 
 # Functions to extract info from pneumokity results
-def get_pneumokity_quality_info(quality_file: os.path) -> dict:
+def get_pneumokity_quality_info(quality_file: Path) -> dict:
     """Parses the quality system data file produced by pneumokity to extract
     version numbers and databases used to run pneumokity.
     Arguments:
@@ -143,7 +143,7 @@ def get_pneumokity_quality_info(quality_file: os.path) -> dict:
     return quality_dict
 
 
-def get_pneumokity_results(result_file: os.path, all_data_file: os.path) -> dict:
+def get_pneumokity_results(result_file: Path, all_data_file: Path) -> dict:
     """Parses the result_data file from pneumokity to extract key results.
     Arguments:
         result_file -- Path to file containing pneumokity headline results
@@ -205,7 +205,7 @@ def get_analysis_status(result_dict: dict):
     return result_dict
 
 
-def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
+def get_vaccine_status(result_dict: dict, vaccine_status_file: Path) -> dict:
     """ "Takes predicted serotype and checks if it is a vaccine preventable
     serotype. Returns overall vaccine status (vaccine preventable or
     non-vaccine preventable) and dict of serotype presence in different
