@@ -455,7 +455,7 @@ def test_create_analysis_fields(
         expected_result_dict_with_vaccine_status,
         "synthscape",
         expected_pipeline_info,
-        context={"orange_box_version": "1.0.0", "onyx_versions_hash": "ABC123"},
+        orange_box_version="1.0.0",
     )
 
     print(analysis_fields.__dict__)
