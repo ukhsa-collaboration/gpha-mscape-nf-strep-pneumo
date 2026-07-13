@@ -5,7 +5,7 @@ upstream context to the analysis record from the samplesheet.
 Added:
 - Orange box version is parsed from the samplesheet in nextflow, then passed as a string into the
 create_pneumokity_analysis_table.py. This is then incorporated into the analysis record.
-- Teh script now queries Onyx for the versions and those (plus the automatically generated hash) are added
+- The script now queries Onyx for the versions and those (plus the automatically generated hash) are added
 to the methods in the analysis record.
 
 Changed:
