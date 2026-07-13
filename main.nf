@@ -31,9 +31,6 @@ workflow {
             context: params.context ? row.orange_box_version : "unknown"
     }
 
-
-
-
     def ch_vaccine_serotypes = Channel.value(
         file("${projectDir}/assets/predicted_serotype_vaccine_status.yaml")
     )
