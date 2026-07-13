@@ -38,7 +38,7 @@ process CREATE_PNEUMOKITY_ONYX_JSON {
     --store-onyx \\
     -i ${meta.id} \\
     -s $server \\
-    -u $context \\
+    -c $context \\
     -o . \\
     -p "${workflow.manifest.name}, ${workflow.manifest.version}, ${workflow.manifest.homePage}" \\
     -vt $vaccine_serotypes \\

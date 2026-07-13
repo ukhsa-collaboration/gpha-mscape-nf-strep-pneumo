@@ -71,8 +71,9 @@ def get_args():
         help="Argument stating whether pneumokity ran successfully",
     )
     parser.add_argument(
-        "--orange_box_version",
-        "-u",
+        "--context",
+        "-c",
+        dest="orange_box_version",
         type=str,
         required=False,
         help="Orange box version used to determine if should run.",
