@@ -9,6 +9,7 @@ process CREATE_PNEUMOKITY_ONYX_JSON {
             - csv: Paths to pneumokity result csv files
             - vaccine_serotypes: Path to yaml containing vaccine status information
             - server: Server working on - one of mscape or synthscape
+            - context: str of orange box version
 
         Outputs:
             - pneumokity_summary - tuple of sample metadata and serotyping results file in onyx analysis table format
@@ -25,6 +26,7 @@ process CREATE_PNEUMOKITY_ONYX_JSON {
     tuple val(meta), val(pneumokity_status), path(csv), path(csv), path(csv)
     path vaccine_serotypes
     val server
+    val context
 
     output:
     tuple val(meta), path("${meta.id}.serotyping.analysis_fields.json"), emit: pneumokity_summary
@@ -36,6 +38,7 @@ process CREATE_PNEUMOKITY_ONYX_JSON {
     --store-onyx \\
     -i ${meta.id} \\
     -s $server \\
+    -c $context \\
     -o . \\
     -p "${workflow.manifest.name}, ${workflow.manifest.version}, ${workflow.manifest.homePage}" \\
     -vt $vaccine_serotypes \\

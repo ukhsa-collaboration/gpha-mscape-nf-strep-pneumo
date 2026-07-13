@@ -7,6 +7,7 @@ script in bin/.
 
 import datetime
 import sys
+from unittest.mock import patch
 
 import pytest  # noqa: F401
 
@@ -175,7 +176,19 @@ def expected_fields_dict(
         "pipeline_name": "gpha-mscape-nf-strep-pneumo",
         "pipeline_url": "https://github.com/ukhsa-collaboration/gpha-mscape-nf-strep-pneumo",
         "pipeline_version": "v0.1.0",
-        "methods": expected_quality_dict,
+        "methods": {
+            "pneumokity_settings": expected_quality_dict,
+            "onyx_versions_hash": "e0c8c12a02fa86494059858c41af311d94c086a286bf4c62d53c21261e90f614",
+            "versions": [
+                {"name": "classifier_version", "version": "1.0.0"},
+                {"name": "classifier_db_date", "version": "1970-01-01"},
+                {"name": "ncbi_taxonomy_date", "version": "1970-01-01"},
+                {"name": "scylla_version", "version": "1.0.0"},
+                {"name": "sylph_db_version", "version": "1.0.0"},
+                {"name": "alignment_db_version", "version": "1.0.0"},
+                {"name": "orange_box_version", "version": "1.0.0"},
+            ],
+        },
         "result": "1",
         "result_metrics": expected_result_dict_with_vaccine_status,
         "synthscape_records": ["C-TEST"],
@@ -410,19 +423,39 @@ def test_get_vaccine_status(result_dict, vaccine_info_file, expected_output, req
     assert vaccine_dict == expected_output
 
 
+ONYX_RECORD = {
+    "climb_id": "ID-123456",
+    "site": "test",
+    "published_date": "2026-01-01",
+    "data": {"datapoint1": 1, "datapoint2": 2, "datapoint3": 3},
+    "classifier_version": "1.0.0",
+    "classifier_db_date": "1970-01-01",
+    "ncbi_taxonomy_date": "1970-01-01",
+    "scylla_version": "1.0.0",
+    "sylph_db_version": "1.0.0",
+    "alignment_db_version": "1.0.0",
+}
+"""Mocked onyx client.get response."""
+
+
+@patch(
+    "onyx_analysis_helper.onyx_analysis_helper_functions.OnyxClient.get",
+)
 def test_create_analysis_fields(
+    mock_onyx,
     expected_quality_dict,
     expected_result_dict_with_vaccine_status,
     expected_fields_dict,
     expected_pipeline_info,
 ):
-
+    mock_onyx.return_value = ONYX_RECORD
     analysis_fields, exitcode = pat.create_analysis_fields(
         "C-TEST",
         expected_quality_dict,
         expected_result_dict_with_vaccine_status,
         "synthscape",
         expected_pipeline_info,
+        orange_box_version="1.0.0",
     )
 
     print(analysis_fields.__dict__)

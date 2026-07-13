@@ -70,6 +70,14 @@ def get_args():
         required=True,
         help="Argument stating whether pneumokity ran successfully",
     )
+    parser.add_argument(
+        "--context",
+        "-c",
+        dest="orange_box_version",
+        type=str,
+        required=False,
+        help="Orange box version used to determine if should run.",
+    )
     # Add group options to specify onyx behaviour
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
@@ -111,7 +119,7 @@ def set_up_logger(stdout_file):
 
 
 # Functions to extract info from pneumokity results
-def get_pneumokity_quality_info(quality_file: os.path) -> dict:
+def get_pneumokity_quality_info(quality_file: Path) -> dict:
     """Parses the quality system data file produced by pneumokity to extract
     version numbers and databases used to run pneumokity.
     Arguments:
@@ -135,7 +143,7 @@ def get_pneumokity_quality_info(quality_file: os.path) -> dict:
     return quality_dict
 
 
-def get_pneumokity_results(result_file: os.path, all_data_file: os.path) -> dict:
+def get_pneumokity_results(result_file: Path, all_data_file: Path) -> dict:
     """Parses the result_data file from pneumokity to extract key results.
     Arguments:
         result_file -- Path to file containing pneumokity headline results
@@ -197,7 +205,7 @@ def get_analysis_status(result_dict: dict):
     return result_dict
 
 
-def get_vaccine_status(result_dict: dict, vaccine_status_file: os.path) -> dict:
+def get_vaccine_status(result_dict: dict, vaccine_status_file: Path) -> dict:
     """ "Takes predicted serotype and checks if it is a vaccine preventable
     serotype. Returns overall vaccine status (vaccine preventable or
     non-vaccine preventable) and dict of serotype presence in different
@@ -300,7 +308,8 @@ def create_analysis_fields(
     pneumokity_results: dict,
     server: str,
     pipeline_info: dict,
-) -> dict:
+    orange_box_version: str,
+) -> tuple[oa.OnyxAnalysis, int]:
     """Set up fields dictionary used to populate analysis table containing
     Streptococcus pneumoniae serotyping results.
     Arguments:
@@ -309,6 +318,7 @@ def create_analysis_fields(
         headline_result -- Short description of main result- - from pnuemokity predicted serotype
         pneumokity_results -- Dictionary containing pneumokity results
         server -- Server code is running on, one of "mscape" or "synthscape"
+        orange_box_version -- orange box version.
     Returns:
         onyx_analysis -- Class containing required fields for input to onyx
                          analysis table
@@ -322,9 +332,27 @@ def create_analysis_fields(
     onyx_analysis.pipeline_name = pipeline_info["name"]
     onyx_analysis.pipeline_version = pipeline_info["version"]
     onyx_analysis.pipeline_url = pipeline_info["homePage"]
-    onyx_analysis.outputs = "No s3 outputs"
+    onyx_analysis.outputs = "No s3 outputs"  # ty:ignore[invalid-assignment]
+    # Add pneumokity settings and onyx analysis hash
+    methods_fail = onyx_analysis.add_methods(
+        methods_dict={
+            "pneumokity_settings": pneumokity_settings,
+        }
+    )
 
-    methods_fail = onyx_analysis.add_methods(methods_dict=pneumokity_settings)
+    _, onyx_versions, query_exitcode = oa.get_data_and_versions_from_onyx(
+        sample_id=record_id, server=server, fields=["climb_id"]
+    )
+
+    if query_exitcode == 0:
+        # Add onyx versions and orange box version
+        methods_versions_fail = onyx_analysis.add_versions_to_methods(
+            tool_versions={"orange_box_version": orange_box_version},
+            onyx_versions=onyx_versions,  # onyx versions hash automatically generated
+        )
+    else:
+        methods_versions_fail = False
+
     headline_result = pneumokity_results["predicted_serotype"]
     results_fail = onyx_analysis.add_results(
         top_result=headline_result, results_dict=pneumokity_results
@@ -334,7 +362,15 @@ def create_analysis_fields(
         publish_analysis=False
     )
 
-    if any([methods_fail, results_fail, required_field_fail, attribute_fail]):  # noqa SIM108
+    if any(
+        [
+            methods_fail,
+            methods_versions_fail,
+            results_fail,
+            required_field_fail,
+            attribute_fail,
+        ]
+    ):  # noqa SIM108
         exitcode = 1
     else:
         exitcode = 0
@@ -351,6 +387,11 @@ def main():
     # Set up log file
     log_file = Path(args.output) / f"{args.climbid}.serotyping.analysis_fields.log.txt"
     set_up_logger(log_file)
+
+    orange_box_version = (
+        args.orange_box_version if args.orange_box_version else "unknown"
+    )
+
     if args.pneumokity_result == "True":
         # Paths to pneumokity files
         quality_file = Path(args.output) / f"{args.climbid}_quality_system_data.csv"
@@ -377,6 +418,7 @@ def main():
         pneumokity_results=result_dict,
         server=args.server,
         pipeline_info=pipeline_dict,
+        orange_box_version=orange_box_version,
     )
 
     # Exit if analysis object not made correctly

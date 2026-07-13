@@ -22,7 +22,8 @@ nextflow run main.nf \
 --extract_reads True \
 --outdir /path/to/outdir \
 --server server-name \
---bucket "name-of-s3-bucket"
+--bucket "name-of-s3-bucket" \
+--context "True"
 ```
 
 ## Parameters
@@ -35,6 +36,7 @@ nextflow run main.nf \
 | outdir        | Path to output directory |
 | server        | Name of server working on |
 | bucket        | Name of s3 bucket to upload result files to |
+| context       | Boolean specifying whether to include the context in the analysis records. if True, must have "orange_box_version" column in the samplesheet. True by default.|
 
 ## Pipeline overview
 
