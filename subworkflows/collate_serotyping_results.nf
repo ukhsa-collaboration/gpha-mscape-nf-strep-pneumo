@@ -30,15 +30,14 @@ workflow COLLATE_SEROTYPING_RESULTS {
     ONYX_WRITE(CREATE_PNEUMOKITY_ONYX_JSON.out.pneumokity_summary, server)
     ch_s3_inputs = ch_pneumokity_complete
             .join(ONYX_WRITE.out.analysis_id)
+            .filter { meta, pneumokity_complete, data_csv, qual_csv, result_csv, analysis_id -> pneumokity_complete.contains("True") }
             .map { meta, pneumokity_complete, data_csv, qual_csv, result_csv, analysis_id
                 -> tuple(meta, data_csv, qual_csv, result_csv, analysis_id)
             }
-    if (pneumokity_status.pass) {
-        S3_UPLOAD(ch_s3_inputs, server, bucket)
-        ch_update_inputs = ONYX_WRITE.out.analysis_id
-            .join(S3_UPLOAD.out.s3_locations)
-        ONYX_UPDATE(ch_update_inputs, server)
-    }
+    S3_UPLOAD(ch_s3_inputs, server, bucket)
+    ch_update_inputs = ONYX_WRITE.out.analysis_id
+        .join(S3_UPLOAD.out.s3_locations)
+    ONYX_UPDATE(ch_update_inputs, server)
     ch_publish = channel.of()
         .concat(ONYX_WRITE.out.analysis_id, ONYX_UPDATE.out.analysis_id.ifEmpty([[], []]))
         .collect()
