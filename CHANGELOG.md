@@ -1,3 +1,13 @@
+v0.3.0
+Updated collate_serotyping_results subworkflow to correctly handle samples where
+pneumokity fails.
+
+Changed:
+- Removed if statement checking for pneumokity status
+- Added filter statement for filter s3_upload inputs to only contains samples
+  where pneumokity ran successfully. s3_upload and onyx_update steps do not
+  run on samples where pneumokity failed.
+
 v0.2.0
 Improved the should_run capability for integration into orchestration by adding
 upstream context to the analysis record from the samplesheet.
