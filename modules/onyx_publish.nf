@@ -14,7 +14,7 @@ process ONYX_PUBLISH {
             - logs: Path to log file for process
 
     */
-    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.1'
+    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.5'
     cpus 1
     memory '1GB'
     tag "${meta.id}"
@@ -30,7 +30,7 @@ process ONYX_PUBLISH {
 
     script:
     """
-    onyx_analysis.py publish \\
+    onyx_analysis publish \\
     -i ${meta.id} \\
     -s $server \\
     -o . \\
