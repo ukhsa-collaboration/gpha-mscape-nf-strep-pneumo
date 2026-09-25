@@ -8,9 +8,10 @@ import argparse
 import logging
 import os
 import sys
-import pandas as pd
 from pathlib import Path
-from onyx import OnyxConfig, OnyxClient, OnyxEnv, OnyxField
+
+import pandas as pd
+from onyx import OnyxClient, OnyxConfig, OnyxEnv, OnyxField
 from onyx_analysis_helper import onyx_analysis_helper_functions as oa
 from onyx_analysis_helper import s3_functions as s3f
 
@@ -43,7 +44,7 @@ def get_args():
         "-s",
         type=str,
         required=True,
-        choices=["mscape", "synthscape"],
+        choices=["mscape", "synthscape", "devscape"],
         help="Specify server code is being run on",
     )
 

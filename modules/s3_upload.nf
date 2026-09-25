@@ -15,7 +15,7 @@ process S3_UPLOAD {
             - s3_locations: Tuple of sample metadata and path to s3 locations file
             - logs: Path to log file for process
     */
-    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.1'
+    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.5'
     cpus 1
     memory '1GB'
     tag "${meta.id}"
@@ -33,7 +33,7 @@ process S3_UPLOAD {
 
     script:
     """
-    onyx_analysis.py s3_upload \\
+    onyx_analysis s3_upload \\
     -i ${meta.id} \\
     -s $server \\
     -b $bucket \\

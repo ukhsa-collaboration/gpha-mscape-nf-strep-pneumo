@@ -14,7 +14,7 @@ process ONYX_WRITE {
             - logs: Path to log file for process
 
     */
-    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.1'
+    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.5'
     cpus 1
     memory '1GB'
     tag "${meta.id}"
@@ -30,7 +30,7 @@ process ONYX_WRITE {
 
     script:
     """
-    onyx_analysis.py write \\
+    onyx_analysis write \\
     -i ${meta.id} \\
     -s $server \\
     -o . \\

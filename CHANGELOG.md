@@ -1,3 +1,15 @@
+v0.3.1
+Updated to onyx analysis helper v0.6.5 in all containers and allow devscape.
+
+Changed:
+- containers use v0.6.5 onyx analysis helper
+- onyx_analysis used from lib.
+- added devscape option on commandline for server option in python script.
+
+Removed:
+- onyx_analysis.py and test_onyx_analysis.py deleted as now in onyx analysis helper
+
+
 v0.3.0
 Updated collate_serotyping_results subworkflow to correctly handle samples where
 pneumokity fails.

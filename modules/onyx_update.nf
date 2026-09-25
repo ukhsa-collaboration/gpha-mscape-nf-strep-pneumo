@@ -15,7 +15,7 @@ process ONYX_UPDATE {
             - logs: Path to log file for process
 
     */
-    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.1'
+    container 'ghcr.io/ukhsa-collaboration/gpha-mscape-onyx-analysis-helper:0.6.5'
     cpus 1
     memory '1GB'
     tag "${meta.id}"
@@ -31,7 +31,7 @@ process ONYX_UPDATE {
 
     script:
     """
-    onyx_analysis.py update \\
+    onyx_analysis update \\
     -i ${meta.id} \\
     -s $server \\
     -o . \\
